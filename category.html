@@ -192,7 +192,7 @@
 
 <!-- 侧边栏（可滑动、无滚动条） -->
 <div class="sidebar">
-    <div class="sidebar-header">Sparks 的书架</div>
+    <div class="sidebar-header">SParks 的书架</div>
     <ul class="sidebar-menu">
         <li><span>📂</span><span>全部分类</span></li>
         <li><span>📚</span><span>画画正规计划</span><span class="count">20</span></li>
@@ -253,12 +253,26 @@
 </div>
 
 <script>
-    // 白天黑夜一键切换
+    // ========== 统一主题切换 ==========
     const themeBtn = document.getElementById('themeBtn');
+    
+    // 初始化：从 localStorage 读取主题
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light');
+        themeBtn.textContent = '🌙';
+    } else {
+        document.body.classList.remove('light');
+        themeBtn.textContent = '☀️';
+    }
+
+    // 切换主题并保存
     themeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('light');
-        themeBtn.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+        const isLight = document.body.classList.toggle('light');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        themeBtn.textContent = isLight ? '🌙' : '☀️';
     });
+    // ================================
 </script>
 </body>
 </html>
