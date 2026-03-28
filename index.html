@@ -269,7 +269,7 @@
         <button class="search-btn">搜索</button>
     </div>
 
-    <!-- 筛选标签区域：作者、文体、领域（标题已隐藏） -->
+    <!-- 筛选标签区域：作者、文体、领域（支持多选） -->
     <div class="hot-tags" id="filterTags"></div>
 
     <div class="section">
@@ -321,9 +321,9 @@
             }
             const data = window.SITE_DATA;
 
-            // ---------- 常规部分筛选 ----------
-            let regularActiveType = null;   // 'author', 'genre', 'field'
-            let regularActiveValue = null;
+            // ---------- 常规部分多选筛选 ----------
+            // 存储激活的筛选条件，格式：Set 存储 "type|value" 字符串
+            let activeFilters = new Set();
 
             function getRegularTagOptions() {
                 const authors = new Set();
@@ -346,7 +346,8 @@
                 if (authors.length) {
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     authors.forEach(author => {
-                        const active = (regularActiveType === 'author' && regularActiveValue === author) ? 'active' : '';
+                        const filterId = `author|${author}`;
+                        const active = activeFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
                     });
                     html += `</div>`;
@@ -354,7 +355,8 @@
                 if (genres.length) {
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     genres.forEach(genre => {
-                        const active = (regularActiveType === 'genre' && regularActiveValue === genre) ? 'active' : '';
+                        const filterId = `genre|${genre}`;
+                        const active = activeFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
                     });
                     html += `</div>`;
@@ -362,36 +364,41 @@
                 if (fields.length) {
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
                     fields.forEach(field => {
-                        const active = (regularActiveType === 'field' && regularActiveValue === field) ? 'active' : '';
+                        const filterId = `field|${field}`;
+                        const active = activeFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
                     });
                     html += `</div>`;
                 }
                 container.innerHTML = html;
 
+                // 绑定点击事件
                 document.querySelectorAll('#filterTags .tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
                         const type = tag.dataset.type;
                         const value = tag.dataset.value;
-                        if (regularActiveType === type && regularActiveValue === value) {
-                            regularActiveType = null;
-                            regularActiveValue = null;
+                        const filterId = `${type}|${value}`;
+                        if (activeFilters.has(filterId)) {
+                            activeFilters.delete(filterId);
                         } else {
-                            regularActiveType = type;
-                            regularActiveValue = value;
+                            activeFilters.add(filterId);
                         }
-                        renderRegularFilters();
-                        renderRegularContent();
+                        renderRegularFilters();  // 刷新高亮
+                        renderRegularContent();  // 刷新内容
                     });
                 });
             }
 
             function filterRegularItems(items) {
-                if (!regularActiveType || !regularActiveValue) return items;
+                if (activeFilters.size === 0) return items;
                 return items.filter(item => {
-                    if (regularActiveType === 'author') return item.author === regularActiveValue;
-                    if (regularActiveType === 'genre') return item.genre === regularActiveValue;
-                    if (regularActiveType === 'field') return item.field === regularActiveValue;
+                    // 所有激活的筛选条件必须同时满足
+                    for (let filterId of activeFilters) {
+                        const [type, value] = filterId.split('|');
+                        if (type === 'author' && item.author !== value) return false;
+                        if (type === 'genre' && item.genre !== value) return false;
+                        if (type === 'field' && item.field !== value) return false;
+                    }
                     return true;
                 });
             }
@@ -419,7 +426,7 @@
                 document.getElementById('resourcesContainer').innerHTML = resourcesHtml || '<div>暂无资源</div>';
             }
 
-            // ---------- 画画模块子标签 ----------
+            // ---------- 画画模块子标签（保持原有单选逻辑） ----------
             let regularPlanActiveTag = null;
             let minorCoursesActiveTag = null;
 
