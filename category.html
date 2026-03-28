@@ -13,7 +13,6 @@
             transition: all 0.3s ease;
         }
 
-        /* 黑夜模式 */
         body {
             background-color: #6b7b76;
             background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px);
@@ -24,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* 白天模式 */
         body.light {
             background-color: #f5f1e9;
             background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 4px);
@@ -39,7 +37,6 @@
             background-color: inherit;
         }
 
-        /* 第一行：标准头部 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -48,7 +45,6 @@
             background-color: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(4px);
             border-radius: 0 0 8px 8px;
-            margin-bottom: 0;
         }
         body.light .header {
             background-color: rgba(255, 255, 255, 0.7);
@@ -77,10 +73,10 @@
             margin-left: 10px;
         }
 
-        /* 第二行：类别切换栏 */
+        /* 第二行：类别栏 */
         .category-bar {
             position: sticky;
-            top: 52px; /* 头部高度约52px，根据实际微调 */
+            top: 52px;
             z-index: 99;
             background-color: rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(4px);
@@ -109,7 +105,7 @@
             color: #fff;
         }
 
-        /* 侧边栏 + 主内容区布局 */
+        /* 主体布局 */
         .main-layout {
             display: flex;
             flex: 1;
@@ -126,15 +122,6 @@
         body.light .sidebar {
             background-color: rgba(255, 255, 255, 0.5);
             border-right: 1px solid rgba(0,0,0,0.08);
-        }
-        .sidebar-header {
-            padding: 20px;
-            font-size: 22px;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        body.light .sidebar-header {
-            border-bottom-color: rgba(0,0,0,0.1);
         }
         .sidebar-filters {
             padding: 15px;
@@ -246,7 +233,7 @@
 
     <div class="main-layout">
         <div class="sidebar">
-            <div class="sidebar-header">SParks 的书架</div>
+            <!-- 已删除侧边栏标题 -->
             <div class="sidebar-filters" id="sidebarFilters">
                 <!-- 动态生成筛选标签 -->
             </div>
@@ -403,7 +390,6 @@
             }
             init();
 
-            // 主题切换
             const themeBtn = document.getElementById('themeBtn');
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
