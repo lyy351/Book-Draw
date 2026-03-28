@@ -269,7 +269,7 @@
         <button class="search-btn">搜索</button>
     </div>
 
-    <!-- 筛选标签区域：作者、文体、领域 -->
+    <!-- 筛选标签区域：作者、文体、领域（标题已隐藏） -->
     <div class="hot-tags" id="filterTags"></div>
 
     <div class="section">
@@ -344,8 +344,7 @@
 
                 let html = '';
                 if (authors.length) {
-                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">
-                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">作者：</span>`;
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     authors.forEach(author => {
                         const active = (regularActiveType === 'author' && regularActiveValue === author) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
@@ -353,8 +352,7 @@
                     html += `</div>`;
                 }
                 if (genres.length) {
-                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">
-                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">文体：</span>`;
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     genres.forEach(genre => {
                         const active = (regularActiveType === 'genre' && regularActiveValue === genre) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
@@ -362,8 +360,7 @@
                     html += `</div>`;
                 }
                 if (fields.length) {
-                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">
-                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">领域：</span>`;
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
                     fields.forEach(field => {
                         const active = (regularActiveType === 'field' && regularActiveValue === field) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
