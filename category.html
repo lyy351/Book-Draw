@@ -44,15 +44,63 @@
             background-color: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(4px);
             border-radius: 0 0 8px 8px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         body.light .header {
             background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         .header-title {
             font-size: 20px;
             font-weight: 500;
             cursor: pointer;
         }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 4px 8px 4px 12px;
+        }
+        body.light .search-box {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 6px 0;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            width: 150px;
+        }
+        body.light .search-box input {
+            color: #333;
+        }
+        .search-box input::placeholder {
+            color: #ccc;
+        }
+        .search-box button {
+            background: transparent;
+            border: none;
+            color: #ff6b35;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        body.light .search-box button {
+            color: #ff6b35;
+        }
+
         .header-nav {
             display: flex;
             gap: 20px;
@@ -159,7 +207,6 @@
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         body.light .filter-tag {
             background-color: rgba(0,0,0,0.05);
@@ -233,7 +280,14 @@
 <body>
     <div class="fixed-header">
         <div class="header">
-            <div class="header-title" id="homeLink">SParks 的书架</div>
+            <div class="header-left">
+                <div class="header-title" id="homeLink">SParks 的书架</div>
+                <!-- 新增搜索框 -->
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索标题或作者...">
+                    <button id="searchBtn">🔍</button>
+                </div>
+            </div>
             <div class="header-nav">
                 <a href="#">搜书</a>
                 <a href="category.html">分类</a>
@@ -280,12 +334,10 @@
             }
 
             let currentCategory = initialCategory;
-            // 多选筛选：存储 { groupKey: value } 的集合，value 是具体标签值
-            // 为了支持多选，我们使用一个 Set 存储 "groupKey|value" 的字符串
-            let activeFilters = new Set();
+            let currentFilter = { type: null, value: null };
+            let searchKeyword = '';  // 新增搜索关键词
 
             // ---------- 辅助函数 ----------
-            // 获取当前类别的数据
             function getCurrentData() {
                 switch(currentCategory) {
                     case 'notes': return data.notes || [];
@@ -298,13 +350,11 @@
                 }
             }
 
-            // 从数据中提取分组信息
+            // 从数据中提取分组信息（与之前相同，省略重复部分）
             function getGroups() {
                 const items = getCurrentData();
                 let groups = [];
-
                 if (currentCategory === 'notes' || currentCategory === 'resources') {
-                    // 作者、文体、领域
                     const authors = new Set();
                     const genres = new Set();
                     const fields = new Set();
@@ -320,14 +370,11 @@
                     ];
                 } 
                 else if (currentCategory === 'regularPlan' || currentCategory === 'minorCourses') {
-                    // 类型 和 专项
                     const types = new Set();
                     const specialties = new Set();
                     items.forEach(item => {
-                        // 类型：优先使用 item.type，否则默认为 "书"
                         let type = item.type || '书';
                         types.add(type);
-                        // 专项：优先使用 item.specialty 或 item.tags，否则从标题提取
                         let specialty = '';
                         if (item.specialty) specialty = item.specialty;
                         else if (item.tags && Array.isArray(item.tags)) specialty = item.tags[0];
@@ -340,7 +387,6 @@
                     ];
                 }
                 else if (currentCategory === 'all') {
-                    // 合并所有条目的作者、文体、领域（常规条目有，画画条目无，但无影响）
                     const authors = new Set();
                     const genres = new Set();
                     const fields = new Set();
@@ -355,27 +401,19 @@
                         { key: 'field', title: '领域', values: [...fields] }
                     ];
                 }
-
-                // 过滤掉空分组
                 return groups.filter(g => g.values.length > 0);
             }
 
-            // 渲染侧边栏
             function renderSidebar() {
                 const groups = getGroups();
                 const sidebar = document.getElementById('sidebarFilters');
                 if (!sidebar) return;
-
                 if (groups.length === 0) {
                     sidebar.innerHTML = '<div style="padding:20px;">无筛选标签</div>';
                     return;
                 }
-
                 let html = '';
                 groups.forEach(group => {
-                    // 判断分组是否折叠（默认展开，可记录到 localStorage，但简单起见默认全部展开）
-                    // 这里我们使用一个 data 属性控制折叠，但为了简单，先全部展开，用户点击标题时再切换
-                    // 我们将在事件中动态添加/移除 collapsed 类
                     html += `
                         <div class="filter-group" data-group-key="${group.key}">
                             <div class="filter-group-header">
@@ -385,15 +423,13 @@
                             <div class="filter-tags">
                     `;
                     group.values.forEach(value => {
-                        const filterId = `${group.key}|${value}`;
-                        const activeClass = activeFilters.has(filterId) ? 'active' : '';
-                        html += `<div class="filter-tag ${activeClass}" data-group="${group.key}" data-value="${value}">${value}</div>`;
+                        const active = (currentFilter.type === group.key && currentFilter.value === value) ? 'active' : '';
+                        html += `<div class="filter-tag ${active}" data-group="${group.key}" data-value="${value}">${value}</div>`;
                     });
                     html += `</div></div>`;
                 });
                 sidebar.innerHTML = html;
 
-                // 绑定折叠/展开事件
                 document.querySelectorAll('.filter-group-header').forEach(header => {
                     header.addEventListener('click', (e) => {
                         const groupDiv = header.closest('.filter-group');
@@ -403,55 +439,55 @@
                     });
                 });
 
-                // 绑定标签点击事件（多选）
                 document.querySelectorAll('.filter-tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const group = tag.dataset.group;
                         const value = tag.dataset.value;
-                        const filterId = `${group}|${value}`;
-                        if (activeFilters.has(filterId)) {
-                            activeFilters.delete(filterId);
+                        if (currentFilter.type === group && currentFilter.value === value) {
+                            currentFilter = { type: null, value: null };
                         } else {
-                            activeFilters.add(filterId);
+                            currentFilter = { type: group, value: value };
                         }
-                        // 重新渲染侧边栏以更新高亮
                         renderSidebar();
-                        // 刷新内容
                         renderContent();
                     });
                 });
             }
 
-            // 筛选数据
-            function filterData(items) {
-                if (activeFilters.size === 0) return items;
-
+            // 新增：关键词过滤
+            function filterByKeyword(items) {
+                if (!searchKeyword.trim()) return items;
+                const keyword = searchKeyword.toLowerCase();
                 return items.filter(item => {
-                    // 遍历所有激活的筛选条件，必须全部满足
-                    for (let filterId of activeFilters) {
-                        const [group, value] = filterId.split('|');
-                        let match = false;
-                        if (group === 'author') match = (item.author === value);
-                        else if (group === 'genre') match = (item.genre === value);
-                        else if (group === 'field') match = (item.field === value);
-                        else if (group === 'type') match = (item.type === value);
-                        else if (group === 'specialty') {
-                            // 专项匹配：优先使用 item.specialty，其次 item.tags 或标题包含
-                            if (item.specialty) match = (item.specialty === value);
-                            else if (item.tags && item.tags.includes(value)) match = true;
-                            else match = item.title.includes(value);
-                        }
-                        if (!match) return false;
+                    return (item.title && item.title.toLowerCase().includes(keyword)) ||
+                           (item.author && item.author.toLowerCase().includes(keyword));
+                });
+            }
+
+            // 原有的筛选（侧边栏）
+            function filterBySidebar(items) {
+                if (!currentFilter.type || !currentFilter.value) return items;
+                return items.filter(item => {
+                    if (currentFilter.type === 'author') return item.author === currentFilter.value;
+                    if (currentFilter.type === 'genre') return item.genre === currentFilter.value;
+                    if (currentFilter.type === 'field') return item.field === currentFilter.value;
+                    if (currentFilter.type === 'type') return (item.type || '书') === currentFilter.value;
+                    if (currentFilter.type === 'specialty') {
+                        let itemSpecialty = '';
+                        if (item.specialty) itemSpecialty = item.specialty;
+                        else if (item.tags && item.tags.length) itemSpecialty = item.tags[0];
+                        else itemSpecialty = item.title.split(/\s+/)[0] || '基础';
+                        return itemSpecialty === currentFilter.value;
                     }
                     return true;
                 });
             }
 
-            // 渲染主内容区
             function renderContent() {
                 let items = getCurrentData();
-                items = filterData(items);
+                items = filterBySidebar(items);
+                items = filterByKeyword(items);  // 叠加关键词筛选
                 const container = document.getElementById('contentArea');
                 if (items.length === 0) {
                     container.innerHTML = '<div class="empty-msg">暂无内容</div>';
@@ -476,11 +512,11 @@
                 container.innerHTML = html;
             }
 
-            // 切换类别
             function switchCategory(category) {
                 currentCategory = category;
-                activeFilters.clear();  // 清空筛选条件
-                // 更新按钮高亮
+                currentFilter = { type: null, value: null };
+                searchKeyword = '';  // 切换类别时清空搜索
+                document.getElementById('searchInput').value = '';
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     if (tab.dataset.category === category) {
                         tab.classList.add('active');
@@ -492,16 +528,27 @@
                 renderContent();
             }
 
-            // 初始化
+            // 新增：搜索事件
+            function initSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchBtn = document.getElementById('searchBtn');
+                function doSearch() {
+                    searchKeyword = searchInput.value;
+                    renderContent();
+                }
+                searchBtn.addEventListener('click', doSearch);
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') doSearch();
+                });
+            }
+
             function init() {
-                // 绑定类别按钮点击事件
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     tab.addEventListener('click', () => switchCategory(tab.dataset.category));
                 });
-                // 首页链接
                 document.getElementById('homeLink').addEventListener('click', () => window.location.href = 'index.html');
-                // 根据 URL 参数设置当前类别
                 switchCategory(initialCategory);
+                initSearch();
             }
             init();
 
