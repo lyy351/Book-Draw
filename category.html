@@ -51,65 +51,17 @@
             background-color: rgba(255, 255, 255, 0.7);
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
         .header-title {
             font-size: 20px;
             font-weight: 500;
             cursor: pointer;
         }
-        /* 搜索框样式：融合、按钮隐形 */
-        .search-box {
-            display: flex;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 4px 8px 4px 12px;
-        }
-        body.light .search-box {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-        .search-box input {
-            background: transparent;
-            border: none;
-            padding: 6px 0;
-            color: #fff;
-            font-size: 13px;
-            outline: none;
-            width: 150px;
-        }
-        body.light .search-box input {
-            color: #333;
-        }
-        .search-box input::placeholder {
-            color: #ccc;
-        }
-        .search-box button {
-            background: transparent;
-            border: none;
-            color: #ff6b35;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 4px 6px;
-            margin-left: 4px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        body.light .search-box button {
-            color: #ff6b35;
-        }
-        /* 按钮无背景无边框，仅图标 */
 
         .header-nav {
             display: flex;
-            gap: 20px;
             align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         .header-nav a {
             color: #fff;
@@ -119,10 +71,34 @@
         body.light .header-nav a {
             color: #333;
         }
+
+        /* 搜索框样式 */
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+        .search-box input {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            width: 140px;
+        }
+        body.light .search-box input {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #333;
+        }
+        .search-box input::placeholder {
+            color: #ccc;
+        }
+
         .theme-toggle {
             cursor: pointer;
             font-size: 16px;
-            margin-left: 10px;
+            margin-left: 5px;
         }
 
         .category-bar {
@@ -285,15 +261,12 @@
 <body>
     <div class="fixed-header">
         <div class="header">
-            <div class="header-left">
-                <div class="header-title" id="homeLink">SParks 的书架</div>
-                <!-- 新增搜索框，紧挨着搜书链接 -->
+            <div class="header-title" id="homeLink">SParks 的书架</div>
+            <div class="header-nav">
+                <!-- 搜索框紧挨着“搜书” -->
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="搜索标题或作者...">
-                    <button id="searchBtn">🔍</button>
                 </div>
-            </div>
-            <div class="header-nav">
                 <a href="#">搜书</a>
                 <a href="category.html">分类</a>
                 <a href="about.html">关于</a>
@@ -340,7 +313,7 @@
 
             let currentCategory = initialCategory;
             let currentFilter = { type: null, value: null };
-            let searchKeyword = '';  // 新增搜索关键词
+            let searchKeyword = '';
 
             // ---------- 辅助函数 ----------
             function getCurrentData() {
@@ -355,7 +328,6 @@
                 }
             }
 
-            // 从数据中提取分组信息
             function getGroups() {
                 const items = getCurrentData();
                 let groups = [];
@@ -460,7 +432,6 @@
                 });
             }
 
-            // 新增：关键词过滤
             function filterByKeyword(items) {
                 if (!searchKeyword.trim()) return items;
                 const keyword = searchKeyword.toLowerCase();
@@ -470,7 +441,6 @@
                 });
             }
 
-            // 原有的筛选（侧边栏）
             function filterBySidebar(items) {
                 if (!currentFilter.type || !currentFilter.value) return items;
                 return items.filter(item => {
@@ -492,7 +462,7 @@
             function renderContent() {
                 let items = getCurrentData();
                 items = filterBySidebar(items);
-                items = filterByKeyword(items);  // 叠加关键词筛选
+                items = filterByKeyword(items);
                 const container = document.getElementById('contentArea');
                 if (items.length === 0) {
                     container.innerHTML = '<div class="empty-msg">暂无内容</div>';
@@ -520,7 +490,7 @@
             function switchCategory(category) {
                 currentCategory = category;
                 currentFilter = { type: null, value: null };
-                searchKeyword = '';  // 切换类别时清空搜索
+                searchKeyword = '';
                 document.getElementById('searchInput').value = '';
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     if (tab.dataset.category === category) {
@@ -533,17 +503,14 @@
                 renderContent();
             }
 
-            // 新增：搜索事件
+            // 搜索事件：仅通过回车触发
             function initSearch() {
                 const searchInput = document.getElementById('searchInput');
-                const searchBtn = document.getElementById('searchBtn');
-                function doSearch() {
-                    searchKeyword = searchInput.value;
-                    renderContent();
-                }
-                searchBtn.addEventListener('click', doSearch);
                 searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') doSearch();
+                    if (e.key === 'Enter') {
+                        searchKeyword = searchInput.value;
+                        renderContent();
+                    }
                 });
             }
 
