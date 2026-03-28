@@ -29,7 +29,6 @@
             color: #2c2c2c;
         }
 
-        /* 固定头部容器 */
         .fixed-header {
             position: sticky;
             top: 0;
@@ -73,7 +72,6 @@
             margin-left: 10px;
         }
 
-        /* 第二行：类别栏 */
         .category-bar {
             position: sticky;
             top: 52px;
@@ -105,7 +103,6 @@
             color: #fff;
         }
 
-        /* 主体布局 */
         .main-layout {
             display: flex;
             flex: 1;
@@ -224,6 +221,7 @@
             </div>
         </div>
         <div class="category-bar" id="categoryBar">
+            <div class="category-tab" data-category="all">所有</div>
             <div class="category-tab" data-category="notes">常规笔记</div>
             <div class="category-tab" data-category="resources">常规资源</div>
             <div class="category-tab" data-category="regularPlan">正规计划</div>
@@ -233,7 +231,6 @@
 
     <div class="main-layout">
         <div class="sidebar">
-            <!-- 已删除侧边栏标题 -->
             <div class="sidebar-filters" id="sidebarFilters">
                 <!-- 动态生成筛选标签 -->
             </div>
@@ -253,19 +250,32 @@
             }
             const data = window.SITE_DATA;
 
-            let currentCategory = 'notes';
+            // 获取 URL 参数
+            const urlParams = new URLSearchParams(window.location.search);
+            let initialCategory = urlParams.get('category');
+            // 有效值：all, notes, resources, regularPlan, minorCourses，默认 all
+            const validCategories = ['all', 'notes', 'resources', 'regularPlan', 'minorCourses'];
+            if (!initialCategory || !validCategories.includes(initialCategory)) {
+                initialCategory = 'all';
+            }
+
+            let currentCategory = initialCategory;
             let currentFilter = { type: null, value: null };
 
+            // 获取当前类别数据（支持 all）
             function getCurrentData() {
                 switch(currentCategory) {
                     case 'notes': return data.notes || [];
                     case 'resources': return data.resources || [];
                     case 'regularPlan': return data.regularPlan || [];
                     case 'minorCourses': return data.minorCourses || [];
+                    case 'all':
+                        return [...(data.notes || []), ...(data.resources || []), ...(data.regularPlan || []), ...(data.minorCourses || [])];
                     default: return [];
                 }
             }
 
+            // 从数据中提取筛选选项（作者、文体、领域）
             function getFiltersFromData(items) {
                 const authors = new Set();
                 const genres = new Set();
@@ -278,6 +288,7 @@
                 return { authors: [...authors], genres: [...genres], fields: [...fields] };
             }
 
+            // 筛选数据
             function filterData(items) {
                 if (!currentFilter.type || !currentFilter.value) return items;
                 return items.filter(item => {
@@ -288,6 +299,7 @@
                 });
             }
 
+            // 渲染侧边栏筛选标签
             function renderSidebar() {
                 const items = getCurrentData();
                 const { authors, genres, fields } = getFiltersFromData(items);
@@ -340,6 +352,7 @@
                 });
             }
 
+            // 渲染主内容区
             function renderContent() {
                 let items = getCurrentData();
                 items = filterData(items);
@@ -352,6 +365,7 @@
                 items.forEach(item => {
                     const coverUrl = item.cover || 'https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg';
                     const link = item.link || '#';
+                    // 对于 resources 类别，新窗口打开；其他情况默认当前窗口
                     const target = (currentCategory === 'resources') ? ' target="_blank"' : '';
                     html += `
                         <div class="book-item">
@@ -367,9 +381,12 @@
                 container.innerHTML = html;
             }
 
+            // 切换类别
             function switchCategory(category) {
                 currentCategory = category;
                 currentFilter = { type: null, value: null };
+                // 更新 URL 参数（可选，但用户没要求，可做可不做）
+                // 更新按钮高亮
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     if (tab.dataset.category === category) {
                         tab.classList.add('active');
@@ -381,15 +398,20 @@
                 renderContent();
             }
 
+            // 初始化
             function init() {
+                // 绑定类别按钮点击事件
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     tab.addEventListener('click', () => switchCategory(tab.dataset.category));
                 });
+                // 首页链接
                 document.getElementById('homeLink').addEventListener('click', () => window.location.href = 'index.html');
-                switchCategory('notes');
+                // 根据 URL 参数设置当前类别
+                switchCategory(initialCategory);
             }
             init();
 
+            // 主题切换
             const themeBtn = document.getElementById('themeBtn');
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
