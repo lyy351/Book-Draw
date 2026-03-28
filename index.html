@@ -26,18 +26,26 @@
             color: #333333;
         }
 
-        .header {
+        /* 固定顶部区域（头部、名言、搜索栏） */
+        .sticky-top {
             position: sticky;
             top: 0;
             z-index: 100;
+            background-color: inherit;
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* 头部样式调整（移除原有的 sticky） */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
             background-color: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(4px);
             border-radius: 8px;
-            margin-bottom: 40px;
+            margin-bottom: 0;
         }
         body.light .header {
             background-color: rgba(255, 255, 255, 0.7);
@@ -68,7 +76,7 @@
 
         .quote {
             text-align: center;
-            margin-bottom: 30px;
+            margin: 20px 0 10px 0;
         }
         .quote-text {
             font-size: 28px;
@@ -128,6 +136,7 @@
             background-color: rgba(255, 255, 255, 0.7);
         }
 
+        /* 筛选标签区域 */
         .hot-tags {
             display: flex;
             flex-wrap: wrap;
@@ -244,29 +253,32 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-title" id="homeLink">SParks 的书架</div>
-        <div class="header-nav">
-            <a href="#">搜书</a>
-            <a href="category.html">分类</a>
-            <a href="about.html">关于</a>
-            <span class="theme-toggle">☀️</span>
+    <!-- 固定顶部区域 -->
+    <div class="sticky-top">
+        <div class="header">
+            <div class="header-title" id="homeLink">SParks 的书架</div>
+            <div class="header-nav">
+                <a href="#">搜书</a>
+                <a href="category.html">分类</a>
+                <a href="about.html">关于</a>
+                <span class="theme-toggle">☀️</span>
+            </div>
         </div>
-    </div>
 
-    <div class="quote">
-        <div class="quote-text">黑发不知勤学早，白发方悔读书迟。</div>
-        <div class="quote-author">- 颜真卿</div>
-    </div>
-
-    <div class="search-bar">
-        <div class="search-dropdown">
-            <span>🔍</span>
-            <span>搜书</span>
-            <span>▼</span>
+        <div class="quote">
+            <div class="quote-text">黑发不知勤学早，白发方悔读书迟。</div>
+            <div class="quote-author">- 颜真卿</div>
         </div>
-        <input type="text" class="search-input" placeholder="输入关键词搜索">
-        <button class="search-btn">搜索</button>
+
+        <div class="search-bar">
+            <div class="search-dropdown">
+                <span>🔍</span>
+                <span>搜书</span>
+                <span>▼</span>
+            </div>
+            <input type="text" class="search-input" placeholder="输入关键词搜索">
+            <button class="search-btn">搜索</button>
+        </div>
     </div>
 
     <!-- 常规大类筛选标签：作者、文体、领域（多选） -->
@@ -422,7 +434,7 @@
             }
 
             // ---------- 画画大类筛选（多选） ----------
-            let drawingActiveFilters = new Set(); // 存储 "type|value" 或 "specialty|value"
+            let drawingActiveFilters = new Set(); // 存储 "type|value"
 
             // 获取所有画画的条目（正规计划+辅修课程）
             function getAllDrawingItems() {
