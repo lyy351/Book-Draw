@@ -62,10 +62,10 @@
             font-weight: 500;
             cursor: pointer;
         }
+        /* 搜索框样式：融合、按钮隐形 */
         .search-box {
             display: flex;
             align-items: center;
-            gap: 8px;
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 20px;
             padding: 4px 8px 4px 12px;
@@ -94,12 +94,17 @@
             color: #ff6b35;
             cursor: pointer;
             font-size: 14px;
-            padding: 4px 8px;
+            padding: 4px 6px;
+            margin-left: 4px;
             border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         body.light .search-box button {
             color: #ff6b35;
         }
+        /* 按钮无背景无边框，仅图标 */
 
         .header-nav {
             display: flex;
@@ -282,7 +287,7 @@
         <div class="header">
             <div class="header-left">
                 <div class="header-title" id="homeLink">SParks 的书架</div>
-                <!-- 新增搜索框 -->
+                <!-- 新增搜索框，紧挨着搜书链接 -->
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="搜索标题或作者...">
                     <button id="searchBtn">🔍</button>
@@ -350,7 +355,7 @@
                 }
             }
 
-            // 从数据中提取分组信息（与之前相同，省略重复部分）
+            // 从数据中提取分组信息
             function getGroups() {
                 const items = getCurrentData();
                 let groups = [];
