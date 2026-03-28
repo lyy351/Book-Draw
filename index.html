@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SParks 的书架</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        /* 🔥 完全使用你提供的背景样式 黑夜模式 */
+        body {
+            background-color: #6b7b76;
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(255,255,255,0.03) 0px,
+                rgba(255,255,255,0.03) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        /* 白天模式（适配纸张风格） */
+        body.light {
+            background-color: #f0ebe5;
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.02) 0px,
+                rgba(0, 0, 0, 0.02) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            color: #333333;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        body.light .header {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .header-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        body.light .header-nav a {
+            color: #333;
+        }
+        .header-nav a:first-child {
+            color: #ff6b35;
+            font-weight: 500;
+        }
+
+        .quote {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .quote-text {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        .quote-author {
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+        body.light .quote-author {
+            color: #666;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 500px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-size: 14px;
+        }
+        body.light .search-input {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+        }
+        .search-input::placeholder {
+            color: #ccc;
+        }
+        .search-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            background-color: #ffffff;
+            color: #333333;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .search-dropdown {
+            padding: 10px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        body.light .search-dropdown {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .hot-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+        .tag {
+            padding: 4px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            font-size: 12px;
+            color: #fff;
+        }
+        body.light .tag {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #555;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            padding: 6px 12px;
+            background-color: #ff6b35;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .section-more {
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+        body.light .section-more {
+            color: #555;
+        }
+
+        .book-list {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .book-item {
+            width: 160px;
+            flex-shrink: 0;
+        }
+        .book-cover {
+            width: 100%;
+            height: 220px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            object-fit: cover;
+        }
+        body.light .book-cover {
+            background-color: #eee;
+        }
+        .book-title {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        body.light .book-title {
+            color: #333;
+        }
+        .book-author {
+            font-size: 11px;
+            color: #e0e0e0;
+        }
+        body.light .book-author {
+            color: #666;
+        }
+
+        .author-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .author-item {
+            width: 200px;
+            height: 80px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        body.light .author-item {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">SParks 的书架</div>
+        <div class="header-nav">
+            <a href="#">搜书</a>
+            <a href="#">分类</a>
+            <a href="#">关于</a>
+            <span class="theme-toggle">☀️</span>
+        </div>
+    </div>
+
+    <div class="quote">
+        <div class="quote-text">黑发不知勤学早，白发方悔读书迟。</div>
+        <div class="quote-author">- 颜真卿</div>
+    </div>
+
+    <div class="search-bar">
+        <div class="search-dropdown">
+            <span>🔍</span>
+            <span>搜书</span>
+            <span>▼</span>
+        </div>
+        <input type="text" class="search-input" placeholder="输入关键词搜索">
+        <button class="search-btn">搜索</button>
+    </div>
+
+    <div class="hot-tags">
+        <span class="tag">热门搜索:</span>
+        <span class="tag">智囊</span>
+        <span class="tag">哈利波特</span>
+        <span class="tag">斗罗大陆</span>
+        <span class="tag">风水</span>
+        <span class="tag">天道</span>
+        <span class="tag">以日为鉴</span>
+        <span class="tag">湖南文艺出版社</span>
+        <span class="tag">苏童</span>
+        <span class="tag">老子</span>
+        <span class="tag">金刚经</span>
+        <span class="tag">三津田信二</span>
+        <span class="tag">空视力</span>
+        <span class="tag">我胆小如鼠</span>
+        <span class="tag">三国</span>
+        <span class="tag">皮裙</span>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规笔记</div>
+            <a href="#" class="section-more">查看更多 ></a>
+        </div>
+        <div class="book-list">
+            <div class="book-item">
+                <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="一个人的万物起源">
+                <div class="book-title">一个人的万物起源</div>
+                <div class="book-author">周忠和</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p3.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="太阳落在了哪座...">
+                <div class="book-title">太阳落在了哪座...</div>
+                <div class="book-author">乔叶</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p5.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="纸上谈爱：情书...">
+                <div class="book-title">纸上谈爱：情书...</div>
+                <div class="book-author">张冲波、骆淑景</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="牛奶狂潮：身体...">
+                <div class="book-title">牛奶狂潮：身体...</div>
+                <div class="book-author">麦秀华、吕红丽</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p3.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="我的普通无可复...">
+                <div class="book-title">我的普通无可复...</div>
+                <div class="book-author">萨曼莎·玛特、王...</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p5.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="自证预言">
+                <div class="book-title">自证预言</div>
+                <div class="book-author">大卫·罗布森、丁...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title" style="background-color: rgba(0,0,0,0.2); color: #fff;">著名作家</div>
+            <a href="#" class="section-more">查看更多 ></a>
+        </div>
+        <div class="author-list">
+            <div class="author-item" style="background-color: #d9a78f; color: #333;"> 胡适</div>
+            <div class="author-item" style="background-color: #8fb0d9; color: #333;">冰心</div>
+            <div class="author-item" style="background-color: #b898b8; color: #333;">徐志摩</div>
+            <div class="author-item" style="background-color: #d9b8a7; color: #333;">林徽因</div>
+            <div class="author-item" style="background-color: #d9c8a7; color: #333;">沈从文 </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规资源</div>
+            <a href="#" class="section-more">查看更多 ></a>
+        </div>
+        <div class="book-list">
+            <div class="book-item">
+                <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="三体">
+                <div class="book-title">三体</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p3.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="流浪地球">
+                <div class="book-title">流浪地球</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p5.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="乡村教师">
+                <div class="book-title">乡村教师</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="球状闪电">
+                <div class="book-title">球状闪电</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p3.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="朝闻道">
+                <div class="book-title">朝闻道</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+            <div class="book-item">
+                <img class="book-cover" src="https://p5.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="赡养人类">
+                <div class="book-title">赡养人类</div>
+                <div class="book-author">刘慈欣</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const toggle = document.querySelector('.theme-toggle');
+    toggle.addEventListener('click', () => {
+        document.body.classList.toggle('light');
+        toggle.textContent = document.body.classList.contains('light') ? '🌙' : '☀️';
+    });
+</script>
+</body>
+</html>
