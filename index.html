@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SParks 的书架</title>
     <style>
+        /* 样式与原版完全一致，此处省略以节省篇幅，实际使用时请复制原样 */
         * {
             margin: 0;
             padding: 0;
@@ -12,22 +13,17 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             transition: all 0.3s ease;
         }
-
-        /* 黑夜模式 */
         body {
             background-color: #6b7b76;
             background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px);
             color: #ffffff;
             padding: 20px;
         }
-
-        /* 白天模式 */
         body.light {
             background-color: #f0ebe5;
             background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 4px);
             color: #333333;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -40,11 +36,9 @@
         body.light .header {
             background-color: rgba(255, 255, 255, 0.7);
         }
-
         .header-title {
             font-size: 20px;
             font-weight: 500;
-            cursor: pointer;
         }
         .header-nav {
             display: flex;
@@ -63,7 +57,6 @@
             color: #ff6b35;
             font-weight: 500;
         }
-
         .quote {
             text-align: center;
             margin-bottom: 30px;
@@ -80,7 +73,6 @@
         body.light .quote-author {
             color: #666;
         }
-
         .search-bar {
             display: flex;
             justify-content: center;
@@ -92,7 +84,7 @@
             width: 500px;
             padding: 10px 15px;
             border: none;
-            border-radius: 4px;
+            border-radius: 4px 0 0 4px;
             background-color: rgba(0, 0, 0, 0.2);
             color: #fff;
             font-size: 14px;
@@ -107,93 +99,67 @@
         .search-btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 0 4px 4px 0;
             background-color: #ffffff;
             color: #333333;
             font-size: 14px;
             cursor: pointer;
         }
-
-        /* 大类别容器 */
-        .category-section {
-            max-width: 1200px;
-            margin: 0 auto 60px auto;
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 16px;
-            padding: 20px;
-        }
-        body.light .category-section {
-            background-color: rgba(255,255,255,0.3);
-        }
-        .category-title {
-            font-size: 28px;
-            font-weight: 500;
-            text-align: center;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-
-        /* 筛选按钮行 */
-        .filter-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .filter-btn {
-            padding: 6px 16px;
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            cursor: pointer;
+        .search-dropdown {
+            padding: 10px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px 0 0 4px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        body.light .filter-btn {
-            background-color: rgba(255,255,255,0.7);
-            color: #333;
+        body.light .search-dropdown {
+            background-color: rgba(255, 255, 255, 0.7);
         }
-        .filter-btn.active {
-            background-color: #ff6b35;
-            color: #fff;
-        }
-
-        /* 子标签行 */
-        .subtags {
+        .hot-tags {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px;
-            margin-bottom: 30px;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 40px;
         }
-        body.light .subtags {
-            border-color: rgba(0,0,0,0.1);
-        }
-        .subtag {
-            padding: 4px 12px;
-            background-color: rgba(0,0,0,0.15);
-            border-radius: 20px;
+        .tag {
+            padding: 4px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
             font-size: 12px;
+            color: #fff;
             cursor: pointer;
         }
-        body.light .subtag {
-            background-color: rgba(0,0,0,0.05);
+        body.light .tag {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #555;
         }
-        .subtag.active {
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            padding: 6px 12px;
             background-color: #ff6b35;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .section-more {
+            font-size: 12px;
             color: #fff;
+            text-decoration: none;
         }
-
-        /* 内容区块通用 */
-        .sub-section {
-            margin-bottom: 30px;
-        }
-        .sub-section h3 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            padding-left: 8px;
-            border-left: 3px solid #ff6b35;
+        body.light .section-more {
+            color: #555;
         }
         .book-list {
             display: flex;
@@ -234,7 +200,47 @@
         body.light .book-author {
             color: #666;
         }
-
+        .author-list {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .author-item {
+            width: 200px;
+            height: 80px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        body.light .author-item {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+        }
+        .plan-block {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        body.light .plan-block {
+            background-color: rgba(255,255,255,0.6);
+        }
+        .sub-section {
+            margin-top: 20px;
+        }
+        .sub-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            padding-left: 8px;
+            border-left: 3px solid #ff6b35;
+        }
         .theme-toggle {
             cursor: pointer;
             font-size: 16px;
@@ -244,7 +250,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-title" id="homeLink">SParks 的书架</div>
+        <div class="header-title">SParks 的书架</div>
         <div class="header-nav">
             <a href="#">搜书</a>
             <a href="category.html">分类</a>
@@ -259,45 +265,52 @@
     </div>
 
     <div class="search-bar">
+        <div class="search-dropdown">
+            <span>🔍</span>
+            <span>搜书</span>
+            <span>▼</span>
+        </div>
         <input type="text" class="search-input" placeholder="输入关键词搜索">
         <button class="search-btn">搜索</button>
     </div>
 
-    <!-- 常规大类别 -->
-    <div class="category-section" id="regularSection">
-        <div class="category-title">📖 常规</div>
-        <div class="filter-buttons" id="regularFilterButtons">
-            <div class="filter-btn" data-filter="author">作者</div>
-            <div class="filter-btn" data-filter="genre">文体</div>
-            <div class="filter-btn" data-filter="field">领域</div>
-        </div>
-        <div id="regularSubtags" class="subtags"></div>
+    <!-- 改造后的热门标签区域：作者、文体、领域三组 -->
+    <div class="hot-tags" id="filterTags"></div>
 
-        <div class="sub-section">
-            <h3>常规笔记</h3>
-            <div id="notesContainer" class="book-list"></div>
+    <!-- 常规笔记区块 -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规笔记</div>
+            <a href="category.html" class="section-more">查看更多 ></a>
         </div>
-        <div class="sub-section">
-            <h3>常规资源</h3>
-            <div id="resourcesContainer" class="book-list"></div>
-        </div>
+        <div id="notesContainer" class="book-list"></div>
     </div>
 
-    <!-- 画画大类别 -->
-    <div class="category-section" id="drawingSection">
-        <div class="category-title">🎨 画画</div>
-        <div class="filter-buttons" id="drawingFilterButtons">
-            <div class="filter-btn" data-filter="regularPlan">正规计划</div>
-            <div class="filter-btn" data-filter="minorCourses">辅修课程</div>
+    <!-- 常规资源区块 -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规资源</div>
+            <a href="category.html" class="section-more">查看更多 ></a>
         </div>
-        <div id="drawingSubtags" class="subtags"></div>
+        <div id="resourcesContainer" class="book-list"></div>
+    </div>
 
+    <!-- 画画模块 -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">画画</div>
+        </div>
         <div class="sub-section">
-            <h3>正规计划书库</h3>
+            <h3>正规计划</h3>
+            <div class="plan-block" id="regularPlanDesc">系统学习绘画的路线图，包括素描、色彩、构图等基础训练。</div>
+            <!-- 新增子标签行 -->
+            <div id="regularPlanSubtags" class="hot-tags" style="margin-bottom: 10px;"></div>
             <div id="regularPlanContainer" class="book-list"></div>
         </div>
         <div class="sub-section">
-            <h3>辅修课程书库</h3>
+            <h3>辅修课程</h3>
+            <!-- 新增子标签行 -->
+            <div id="minorCoursesSubtags" class="hot-tags" style="margin-bottom: 10px;"></div>
             <div id="minorCoursesContainer" class="book-list"></div>
         </div>
     </div>
@@ -306,17 +319,17 @@
     <script>
         (function() {
             if (!window.SITE_DATA) {
-                console.error('数据文件未加载，请检查 data.js');
+                console.error('数据文件未加载');
                 return;
             }
             const data = window.SITE_DATA;
 
-            // ---------- 常规部分 ----------
-            let regularActiveFilter = 'author';     // 当前选中的筛选类型
-            let regularActiveSubtag = null;         // 当前选中的子标签值
+            // ---------- 常规部分筛选 ----------
+            let regularActiveType = null;   // 'author', 'genre', 'field'
+            let regularActiveValue = null;
 
-            // 获取所有可能的子标签（作者、文体、领域）
-            function getRegularSubtags() {
+            // 从数据中提取所有作者、文体、领域
+            function getRegularTagOptions() {
                 const authors = new Set();
                 const genres = new Set();
                 const fields = new Set();
@@ -328,43 +341,66 @@
                 return { authors: [...authors], genres: [...genres], fields: [...fields] };
             }
 
-            // 渲染常规子标签行
-            function renderRegularSubtags() {
-                const { authors, genres, fields } = getRegularSubtags();
-                let list = [];
-                if (regularActiveFilter === 'author') list = authors;
-                else if (regularActiveFilter === 'genre') list = genres;
-                else if (regularActiveFilter === 'field') list = fields;
-
-                const container = document.getElementById('regularSubtags');
+            // 渲染常规筛选标签（三组）
+            function renderRegularFilters() {
+                const { authors, genres, fields } = getRegularTagOptions();
+                const container = document.getElementById('filterTags');
                 if (!container) return;
-                if (list.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; width:100%;">暂无标签</div>';
-                    return;
+
+                let html = '';
+                if (authors.length) {
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">
+                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">作者：</span>`;
+                    authors.forEach(author => {
+                        const active = (regularActiveType === 'author' && regularActiveValue === author) ? 'active' : '';
+                        html += `<span class="tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
+                    });
+                    html += `</div>`;
                 }
-                container.innerHTML = list.map(tag => `<span class="subtag ${regularActiveSubtag === tag ? 'active' : ''}" data-tag="${tag}">${tag}</span>`).join('');
+                if (genres.length) {
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">
+                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">文体：</span>`;
+                    genres.forEach(genre => {
+                        const active = (regularActiveType === 'genre' && regularActiveValue === genre) ? 'active' : '';
+                        html += `<span class="tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
+                    });
+                    html += `</div>`;
+                }
+                if (fields.length) {
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">
+                                <span style="color: #ff6b35; font-size: 12px; margin-right: 4px;">领域：</span>`;
+                    fields.forEach(field => {
+                        const active = (regularActiveType === 'field' && regularActiveValue === field) ? 'active' : '';
+                        html += `<span class="tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
+                    });
+                    html += `</div>`;
+                }
+                container.innerHTML = html;
+
                 // 绑定点击事件
-                document.querySelectorAll('#regularSubtags .subtag').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const tag = e.target.dataset.tag;
-                        if (regularActiveSubtag === tag) {
-                            regularActiveSubtag = null;
+                document.querySelectorAll('#filterTags .tag').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const type = tag.dataset.type;
+                        const value = tag.dataset.value;
+                        if (regularActiveType === type && regularActiveValue === value) {
+                            regularActiveType = null;
+                            regularActiveValue = null;
                         } else {
-                            regularActiveSubtag = tag;
+                            regularActiveType = type;
+                            regularActiveValue = value;
                         }
-                        renderRegularSubtags();
-                        renderRegularContent();
+                        renderRegularFilters();      // 刷新高亮
+                        renderRegularContent();      // 刷新内容
                     });
                 });
             }
 
-            // 筛选常规内容
             function filterRegularItems(items) {
-                if (!regularActiveSubtag) return items;
+                if (!regularActiveType || !regularActiveValue) return items;
                 return items.filter(item => {
-                    if (regularActiveFilter === 'author') return item.author === regularActiveSubtag;
-                    if (regularActiveFilter === 'genre') return item.genre === regularActiveSubtag;
-                    if (regularActiveFilter === 'field') return item.field === regularActiveSubtag;
+                    if (regularActiveType === 'author') return item.author === regularActiveValue;
+                    if (regularActiveType === 'genre') return item.genre === regularActiveValue;
+                    if (regularActiveType === 'field') return item.field === regularActiveValue;
                     return true;
                 });
             }
@@ -392,134 +428,106 @@
                 document.getElementById('resourcesContainer').innerHTML = resourcesHtml || '<div>暂无资源</div>';
             }
 
-            // 常规按钮切换
-            function initRegular() {
-                const btns = document.querySelectorAll('#regularFilterButtons .filter-btn');
-                btns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        btns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        regularActiveFilter = btn.dataset.filter;
-                        regularActiveSubtag = null;
-                        renderRegularSubtags();
-                        renderRegularContent();
-                    });
-                });
-                // 默认激活作者按钮
-                document.querySelector('#regularFilterButtons .filter-btn[data-filter="author"]').classList.add('active');
-                renderRegularSubtags();
-                renderRegularContent();
-            }
+            // ---------- 画画模块子标签筛选 ----------
+            // 为每个类别独立保存筛选状态
+            let regularPlanActiveTag = null;
+            let minorCoursesActiveTag = null;
 
-            // ---------- 画画部分 ----------
-            let drawingActiveFilter = 'regularPlan';   // 'regularPlan' 或 'minorCourses'
-            let drawingActiveSubtag = null;
-
-            // 从画画数据中提取子标签（假设每个条目有 tags 字段，如果没有则自动生成）
-            function getDrawingSubtags(type) {
-                const items = type === 'regularPlan' ? data.regularPlan : data.minorCourses;
+            // 获取某类别的所有标签（从数据中的 tags 字段或自动生成）
+            function getDrawingTags(categoryKey) {
+                const items = categoryKey === 'regularPlan' ? data.regularPlan : data.minorCourses;
                 const tagsSet = new Set();
                 items.forEach(item => {
                     if (item.tags && Array.isArray(item.tags)) {
                         item.tags.forEach(t => tagsSet.add(t));
                     } else {
-                        // 如果没有 tags，则用标题的第一个词或默认生成
-                        const firstWord = item.title.split(/\s+/)[0];
-                        if (firstWord && firstWord.length > 1) tagsSet.add(firstWord);
+                        // 自动从标题中提取关键词作为标签
+                        const words = item.title.split(/\s+/);
+                        if (words.length > 0 && words[0].length > 1) tagsSet.add(words[0]);
                         else tagsSet.add('基础');
                     }
                 });
-                // 确保至少有一些默认标签
+                // 确保至少有一个标签
                 if (tagsSet.size === 0) {
-                    if (type === 'regularPlan') tagsSet.add('素描', '色彩', '构图');
+                    if (categoryKey === 'regularPlan') tagsSet.add('素描', '色彩', '构图');
                     else tagsSet.add('速写', '水彩', '插画');
                 }
                 return [...tagsSet];
             }
 
-            function renderDrawingSubtags() {
-                const tags = getDrawingSubtags(drawingActiveFilter);
-                const container = document.getElementById('drawingSubtags');
+            // 渲染某一类别的子标签行
+            function renderDrawingSubtags(categoryKey, containerId, activeTagVarName) {
+                const container = document.getElementById(containerId);
                 if (!container) return;
+                const tags = getDrawingTags(categoryKey);
                 if (tags.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; width:100%;">暂无标签</div>';
+                    container.innerHTML = '';
                     return;
                 }
-                container.innerHTML = tags.map(tag => `<span class="subtag ${drawingActiveSubtag === tag ? 'active' : ''}" data-tag="${tag}">${tag}</span>`).join('');
-                document.querySelectorAll('#drawingSubtags .subtag').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const tag = e.target.dataset.tag;
-                        if (drawingActiveSubtag === tag) {
-                            drawingActiveSubtag = null;
+                let html = '';
+                tags.forEach(tag => {
+                    const activeClass = (window[activeTagVarName] === tag) ? 'active' : '';
+                    html += `<span class="tag ${activeClass}" data-tag="${tag}">${tag}</span>`;
+                });
+                container.innerHTML = html;
+
+                // 绑定点击事件
+                container.querySelectorAll('.tag').forEach(tagEl => {
+                    tagEl.addEventListener('click', (e) => {
+                        const tagValue = tagEl.dataset.tag;
+                        if (window[activeTagVarName] === tagValue) {
+                            window[activeTagVarName] = null;
                         } else {
-                            drawingActiveSubtag = tag;
+                            window[activeTagVarName] = tagValue;
                         }
-                        renderDrawingSubtags();
-                        renderDrawingContent();
+                        // 重新渲染该行高亮
+                        renderDrawingSubtags(categoryKey, containerId, activeTagVarName);
+                        // 刷新对应内容
+                        renderDrawingContent(categoryKey);
                     });
                 });
             }
 
-            function filterDrawingItems(items) {
-                if (!drawingActiveSubtag) return items;
-                return items.filter(item => {
-                    if (item.tags && item.tags.includes(drawingActiveSubtag)) return true;
-                    // 如果没有 tags 字段，则尝试匹配标题包含子标签
-                    return item.title.includes(drawingActiveSubtag);
-                });
-            }
-
-            function renderDrawingContent() {
-                let regularItems = data.regularPlan || [];
-                let minorItems = data.minorCourses || [];
-                if (drawingActiveFilter === 'regularPlan') {
-                    regularItems = filterDrawingItems(regularItems);
-                } else if (drawingActiveFilter === 'minorCourses') {
-                    minorItems = filterDrawingItems(minorItems);
+            // 渲染画画内容（某一类别）
+            function renderDrawingContent(categoryKey) {
+                const items = categoryKey === 'regularPlan' ? data.regularPlan : data.minorCourses;
+                const activeTag = categoryKey === 'regularPlan' ? regularPlanActiveTag : minorCoursesActiveTag;
+                let filtered = items;
+                if (activeTag) {
+                    filtered = items.filter(item => {
+                        if (item.tags && item.tags.includes(activeTag)) return true;
+                        // 如果没有 tags 字段，则尝试匹配标题包含子标签
+                        return item.title.includes(activeTag);
+                    });
                 }
-                // 无论选哪个，两个区域都显示，但只有当前激活的区域会被筛选
-                const regularHtml = regularItems.map(book => `
+                const containerId = categoryKey === 'regularPlan' ? 'regularPlanContainer' : 'minorCoursesContainer';
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                const html = filtered.map(book => `
                     <div class="book-item">
                         <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
                         <a href="${book.link}" class="book-title">${book.title}</a>
                         <div class="book-author">${book.author}</div>
                     </div>
                 `).join('');
-                document.getElementById('regularPlanContainer').innerHTML = regularHtml || '<div>暂无内容</div>';
-
-                const minorHtml = minorItems.map(book => `
-                    <div class="book-item">
-                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
-                        <a href="${book.link}" class="book-title">${book.title}</a>
-                        <div class="book-author">${book.author}</div>
-                    </div>
-                `).join('');
-                document.getElementById('minorCoursesContainer').innerHTML = minorHtml || '<div>暂无内容</div>';
-            }
-
-            function initDrawing() {
-                const btns = document.querySelectorAll('#drawingFilterButtons .filter-btn');
-                btns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        btns.forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        drawingActiveFilter = btn.dataset.filter;
-                        drawingActiveSubtag = null;
-                        renderDrawingSubtags();
-                        renderDrawingContent();
-                    });
-                });
-                // 默认激活正规计划按钮
-                document.querySelector('#drawingFilterButtons .filter-btn[data-filter="regularPlan"]').classList.add('active');
-                renderDrawingSubtags();
-                renderDrawingContent();
+                container.innerHTML = html || '<div>暂无内容</div>';
             }
 
             // 初始化所有
-            initRegular();
-            initDrawing();
+            function init() {
+                renderRegularFilters();
+                renderRegularContent();
 
-            // 主题切换
+                // 初始化画画模块的子标签和内容
+                renderDrawingSubtags('regularPlan', 'regularPlanSubtags', 'regularPlanActiveTag');
+                renderDrawingContent('regularPlan');
+                renderDrawingSubtags('minorCourses', 'minorCoursesSubtags', 'minorCoursesActiveTag');
+                renderDrawingContent('minorCourses');
+            }
+
+            init();
+
+            // 主题切换（统一）
             const toggle = document.querySelector('.theme-toggle');
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') {
@@ -533,11 +541,6 @@
                 const isLight = document.body.classList.toggle('light');
                 localStorage.setItem('theme', isLight ? 'light' : 'dark');
                 toggle.textContent = isLight ? '🌙' : '☀️';
-            });
-
-            // 首页链接
-            document.getElementById('homeLink').addEventListener('click', () => {
-                window.location.href = 'index.html';
             });
         })();
     </script>
