@@ -1,0 +1,39 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+/* 黑夜模式默认 */
+body {
+    background-color: #6b7b76;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px);
+    color: #ffffff;
+    padding: 20px;
+}
+
+/* 白天模式 */
+body.light {
+    background-color: #f0ebe5;
+    background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 4px);
+    color: #333333;
+}
+
+/* 公用头部样式 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 40px;
+}
+body.light .header {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* 其他公共组件样式（引用区、按钮、标签等）… */
+/* 你可以把之前 index.html 和 category.html 中重复的样式都搬到这里 */
