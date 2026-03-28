@@ -253,16 +253,19 @@
             // 获取 URL 参数
             const urlParams = new URLSearchParams(window.location.search);
             let initialCategory = urlParams.get('category');
-            // 有效值：all, notes, resources, regularPlan, minorCourses，默认 all
             const validCategories = ['all', 'notes', 'resources', 'regularPlan', 'minorCourses'];
             if (!initialCategory || !validCategories.includes(initialCategory)) {
                 initialCategory = 'all';
             }
 
             let currentCategory = initialCategory;
+            // 筛选状态：{ type: string, value: any }
+            // 对于 notes/resources: type 为 'author'/'genre'/'field'
+            // 对于 regularPlan/minorCourses: type 为 'tag'
             let currentFilter = { type: null, value: null };
 
-            // 获取当前类别数据（支持 all）
+            // ---------- 辅助函数 ----------
+            // 获取当前类别的数据
             function getCurrentData() {
                 switch(currentCategory) {
                     case 'notes': return data.notes || [];
@@ -275,8 +278,30 @@
                 }
             }
 
-            // 从数据中提取筛选选项（作者、文体、领域）
-            function getFiltersFromData(items) {
+            // 为画画类条目提取标签（与 index.html 逻辑一致）
+            function getDrawingTags(categoryKey) {
+                const items = categoryKey === 'regularPlan' ? data.regularPlan : data.minorCourses;
+                const tagsSet = new Set();
+                items.forEach(item => {
+                    if (item.tags && Array.isArray(item.tags)) {
+                        item.tags.forEach(t => tagsSet.add(t));
+                    } else {
+                        // 自动从标题中提取关键词
+                        const words = item.title.split(/\s+/);
+                        if (words.length > 0 && words[0].length > 1) tagsSet.add(words[0]);
+                        else tagsSet.add('基础');
+                    }
+                });
+                // 确保至少有一个标签
+                if (tagsSet.size === 0) {
+                    if (categoryKey === 'regularPlan') tagsSet.add('素描', '色彩', '构图');
+                    else tagsSet.add('速写', '水彩', '插画');
+                }
+                return [...tagsSet];
+            }
+
+            // 从常规数据中提取作者、文体、领域
+            function getRegularFilters(items) {
                 const authors = new Set();
                 const genres = new Set();
                 const fields = new Set();
@@ -288,55 +313,99 @@
                 return { authors: [...authors], genres: [...genres], fields: [...fields] };
             }
 
-            // 筛选数据
-            function filterData(items) {
-                if (!currentFilter.type || !currentFilter.value) return items;
-                return items.filter(item => {
-                    if (currentFilter.type === 'author') return item.author === currentFilter.value;
-                    if (currentFilter.type === 'genre') return item.genre === currentFilter.value;
-                    if (currentFilter.type === 'field') return item.field === currentFilter.value;
-                    return true;
-                });
-            }
-
-            // 渲染侧边栏筛选标签
+            // 渲染侧边栏（根据当前类别动态生成）
             function renderSidebar() {
                 const items = getCurrentData();
-                const { authors, genres, fields } = getFiltersFromData(items);
                 const sidebar = document.getElementById('sidebarFilters');
+                if (!sidebar) return;
+
                 let html = '';
-                if (authors.length) {
-                    html += `<div class="filter-group">
-                                <div class="filter-group-title">📝 作者</div>
-                                <div class="filter-tags" data-type="author">`;
-                    authors.forEach(author => {
-                        const active = (currentFilter.type === 'author' && currentFilter.value === author) ? 'active' : '';
-                        html += `<span class="filter-tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
-                    });
-                    html += `</div></div>`;
+                if (currentCategory === 'notes' || currentCategory === 'resources') {
+                    // 显示作者、文体、领域
+                    const { authors, genres, fields } = getRegularFilters(items);
+                    if (authors.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">📝 作者</div>
+                                    <div class="filter-tags" data-type="author">`;
+                        authors.forEach(author => {
+                            const active = (currentFilter.type === 'author' && currentFilter.value === author) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                    if (genres.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">📖 文体</div>
+                                    <div class="filter-tags" data-type="genre">`;
+                        genres.forEach(genre => {
+                            const active = (currentFilter.type === 'genre' && currentFilter.value === genre) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                    if (fields.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">🌐 领域</div>
+                                    <div class="filter-tags" data-type="field">`;
+                        fields.forEach(field => {
+                            const active = (currentFilter.type === 'field' && currentFilter.value === field) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                } 
+                else if (currentCategory === 'regularPlan' || currentCategory === 'minorCourses') {
+                    // 显示该类别的子标签（如素描、色彩等）
+                    const tags = getDrawingTags(currentCategory);
+                    if (tags.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">🏷️ 标签</div>
+                                    <div class="filter-tags" data-type="tag">`;
+                        tags.forEach(tag => {
+                            const active = (currentFilter.type === 'tag' && currentFilter.value === tag) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="tag" data-value="${tag}">${tag}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
                 }
-                if (genres.length) {
-                    html += `<div class="filter-group">
-                                <div class="filter-group-title">📖 文体</div>
-                                <div class="filter-tags" data-type="genre">`;
-                    genres.forEach(genre => {
-                        const active = (currentFilter.type === 'genre' && currentFilter.value === genre) ? 'active' : '';
-                        html += `<span class="filter-tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
-                    });
-                    html += `</div></div>`;
+                else if (currentCategory === 'all') {
+                    // 对于“所有”，显示作者、文体、领域（因为常规笔记/资源有这些字段，画画类条目无，但点击时只会影响有对应字段的条目）
+                    const { authors, genres, fields } = getRegularFilters(items);
+                    if (authors.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">📝 作者</div>
+                                    <div class="filter-tags" data-type="author">`;
+                        authors.forEach(author => {
+                            const active = (currentFilter.type === 'author' && currentFilter.value === author) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                    if (genres.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">📖 文体</div>
+                                    <div class="filter-tags" data-type="genre">`;
+                        genres.forEach(genre => {
+                            const active = (currentFilter.type === 'genre' && currentFilter.value === genre) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
+                    if (fields.length) {
+                        html += `<div class="filter-group">
+                                    <div class="filter-group-title">🌐 领域</div>
+                                    <div class="filter-tags" data-type="field">`;
+                        fields.forEach(field => {
+                            const active = (currentFilter.type === 'field' && currentFilter.value === field) ? 'active' : '';
+                            html += `<span class="filter-tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
+                        });
+                        html += `</div></div>`;
+                    }
                 }
-                if (fields.length) {
-                    html += `<div class="filter-group">
-                                <div class="filter-group-title">🌐 领域</div>
-                                <div class="filter-tags" data-type="field">`;
-                    fields.forEach(field => {
-                        const active = (currentFilter.type === 'field' && currentFilter.value === field) ? 'active' : '';
-                        html += `<span class="filter-tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
-                    });
-                    html += `</div></div>`;
-                }
+
                 sidebar.innerHTML = html || '<div style="padding:20px;">无筛选标签</div>';
 
+                // 绑定筛选标签点击事件
                 document.querySelectorAll('.filter-tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
                         const type = tag.dataset.type;
@@ -346,9 +415,25 @@
                         } else {
                             currentFilter = { type, value };
                         }
-                        renderSidebar();
-                        renderContent();
+                        renderSidebar();    // 刷新高亮
+                        renderContent();    // 刷新内容
                     });
+                });
+            }
+
+            // 筛选数据
+            function filterData(items) {
+                if (!currentFilter.type || !currentFilter.value) return items;
+                return items.filter(item => {
+                    if (currentFilter.type === 'author') return item.author === currentFilter.value;
+                    if (currentFilter.type === 'genre') return item.genre === currentFilter.value;
+                    if (currentFilter.type === 'field') return item.field === currentFilter.value;
+                    if (currentFilter.type === 'tag') {
+                        // 对于画画类条目，优先使用 tags 字段，否则判断标题包含
+                        if (item.tags && item.tags.includes(currentFilter.value)) return true;
+                        return item.title.includes(currentFilter.value);
+                    }
+                    return true;
                 });
             }
 
@@ -385,7 +470,6 @@
             function switchCategory(category) {
                 currentCategory = category;
                 currentFilter = { type: null, value: null };
-                // 更新 URL 参数（可选，但用户没要求，可做可不做）
                 // 更新按钮高亮
                 document.querySelectorAll('.category-tab').forEach(tab => {
                     if (tab.dataset.category === category) {
