@@ -269,8 +269,8 @@
         <button class="search-btn">搜索</button>
     </div>
 
-    <!-- 筛选标签区域：作者、文体、领域（支持多选） -->
-    <div class="hot-tags" id="filterTags"></div>
+    <!-- 常规大类筛选标签：作者、文体、领域（多选） -->
+    <div class="hot-tags" id="regularFilterTags"></div>
 
     <div class="section">
         <div class="section-header">
@@ -288,18 +288,17 @@
         <div id="resourcesContainer" class="book-list"></div>
     </div>
 
-    <!-- 画画模块 -->
+    <!-- 画画大类筛选标签：类型、专项（多选） -->
+    <div class="hot-tags" id="drawingFilterTags"></div>
+
+    <!-- 画画模块内容区 -->
     <div class="section">
-        <div class="section-header">
-            <div class="section-title">画画</div>
-        </div>
         <div class="sub-section">
             <div class="section-header">
                 <div class="section-title">正规计划</div>
                 <a href="category.html?category=regularPlan" class="section-more">查看更多 ></a>
             </div>
             <div class="plan-block" id="regularPlanDesc">系统学习绘画的路线图，包括素描、色彩、构图等基础训练。</div>
-            <div id="regularPlanSubtags" class="hot-tags" style="margin-bottom: 10px;"></div>
             <div id="regularPlanContainer" class="book-list"></div>
         </div>
         <div class="sub-section">
@@ -307,7 +306,6 @@
                 <div class="section-title">辅修课程</div>
                 <a href="category.html?category=minorCourses" class="section-more">查看更多 ></a>
             </div>
-            <div id="minorCoursesSubtags" class="hot-tags" style="margin-bottom: 10px;"></div>
             <div id="minorCoursesContainer" class="book-list"></div>
         </div>
     </div>
@@ -321,9 +319,8 @@
             }
             const data = window.SITE_DATA;
 
-            // ---------- 常规部分多选筛选 ----------
-            // 存储激活的筛选条件，格式：Set 存储 "type|value" 字符串
-            let activeFilters = new Set();
+            // ---------- 常规大类筛选（多选） ----------
+            let regularActiveFilters = new Set(); // 存储 "type|value"
 
             function getRegularTagOptions() {
                 const authors = new Set();
@@ -339,7 +336,7 @@
 
             function renderRegularFilters() {
                 const { authors, genres, fields } = getRegularTagOptions();
-                const container = document.getElementById('filterTags');
+                const container = document.getElementById('regularFilterTags');
                 if (!container) return;
 
                 let html = '';
@@ -347,7 +344,7 @@
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     authors.forEach(author => {
                         const filterId = `author|${author}`;
-                        const active = activeFilters.has(filterId) ? 'active' : '';
+                        const active = regularActiveFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="author" data-value="${author}">${author}</span>`;
                     });
                     html += `</div>`;
@@ -356,7 +353,7 @@
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
                     genres.forEach(genre => {
                         const filterId = `genre|${genre}`;
-                        const active = activeFilters.has(filterId) ? 'active' : '';
+                        const active = regularActiveFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="genre" data-value="${genre}">${genre}</span>`;
                     });
                     html += `</div>`;
@@ -365,35 +362,33 @@
                     html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
                     fields.forEach(field => {
                         const filterId = `field|${field}`;
-                        const active = activeFilters.has(filterId) ? 'active' : '';
+                        const active = regularActiveFilters.has(filterId) ? 'active' : '';
                         html += `<span class="tag ${active}" data-type="field" data-value="${field}">${field}</span>`;
                     });
                     html += `</div>`;
                 }
                 container.innerHTML = html;
 
-                // 绑定点击事件
-                document.querySelectorAll('#filterTags .tag').forEach(tag => {
+                document.querySelectorAll('#regularFilterTags .tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
                         const type = tag.dataset.type;
                         const value = tag.dataset.value;
                         const filterId = `${type}|${value}`;
-                        if (activeFilters.has(filterId)) {
-                            activeFilters.delete(filterId);
+                        if (regularActiveFilters.has(filterId)) {
+                            regularActiveFilters.delete(filterId);
                         } else {
-                            activeFilters.add(filterId);
+                            regularActiveFilters.add(filterId);
                         }
-                        renderRegularFilters();  // 刷新高亮
-                        renderRegularContent();  // 刷新内容
+                        renderRegularFilters();
+                        renderRegularContent();
                     });
                 });
             }
 
             function filterRegularItems(items) {
-                if (activeFilters.size === 0) return items;
+                if (regularActiveFilters.size === 0) return items;
                 return items.filter(item => {
-                    // 所有激活的筛选条件必须同时满足
-                    for (let filterId of activeFilters) {
+                    for (let filterId of regularActiveFilters) {
                         const [type, value] = filterId.split('|');
                         if (type === 'author' && item.author !== value) return false;
                         if (type === 'genre' && item.genre !== value) return false;
@@ -426,88 +421,130 @@
                 document.getElementById('resourcesContainer').innerHTML = resourcesHtml || '<div>暂无资源</div>';
             }
 
-            // ---------- 画画模块子标签（保持原有单选逻辑） ----------
-            let regularPlanActiveTag = null;
-            let minorCoursesActiveTag = null;
+            // ---------- 画画大类筛选（多选） ----------
+            let drawingActiveFilters = new Set(); // 存储 "type|value" 或 "specialty|value"
 
-            function getDrawingTags(categoryKey) {
-                const items = categoryKey === 'regularPlan' ? data.regularPlan : data.minorCourses;
-                const tagsSet = new Set();
-                items.forEach(item => {
-                    if (item.tags && Array.isArray(item.tags)) {
-                        item.tags.forEach(t => tagsSet.add(t));
-                    } else {
-                        const words = item.title.split(/\s+/);
-                        if (words.length > 0 && words[0].length > 1) tagsSet.add(words[0]);
-                        else tagsSet.add('基础');
-                    }
-                });
-                if (tagsSet.size === 0) {
-                    if (categoryKey === 'regularPlan') tagsSet.add('素描', '色彩', '构图');
-                    else tagsSet.add('速写', '水彩', '插画');
-                }
-                return [...tagsSet];
+            // 获取所有画画的条目（正规计划+辅修课程）
+            function getAllDrawingItems() {
+                return [...(data.regularPlan || []), ...(data.minorCourses || [])];
             }
 
-            function renderDrawingSubtags(categoryKey, containerId, activeTagVarName) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                const tags = getDrawingTags(categoryKey);
-                if (tags.length === 0) {
-                    container.innerHTML = '';
-                    return;
-                }
-                let html = '';
-                tags.forEach(tag => {
-                    const activeClass = (window[activeTagVarName] === tag) ? 'active' : '';
-                    html += `<span class="tag ${activeClass}" data-tag="${tag}">${tag}</span>`;
+            // 提取可用的类型和专项
+            function getDrawingTagOptions() {
+                const types = new Set();
+                const specialties = new Set();
+                const allItems = getAllDrawingItems();
+                allItems.forEach(item => {
+                    // 类型：优先使用 item.type，否则默认为 "书"
+                    let type = item.type || '书';
+                    types.add(type);
+                    // 专项：优先使用 item.specialty，其次 item.tags 第一个，否则从标题提取
+                    let specialty = '';
+                    if (item.specialty) specialty = item.specialty;
+                    else if (item.tags && Array.isArray(item.tags) && item.tags.length) specialty = item.tags[0];
+                    else specialty = item.title.split(/\s+/)[0] || '基础';
+                    specialties.add(specialty);
                 });
+                // 保证至少有一个默认
+                if (types.size === 0) types.add('书');
+                if (specialties.size === 0) specialties.add('基础');
+                return { types: [...types], specialties: [...specialties] };
+            }
+
+            function renderDrawingFilters() {
+                const { types, specialties } = getDrawingTagOptions();
+                const container = document.getElementById('drawingFilterTags');
+                if (!container) return;
+
+                let html = '';
+                if (types.length) {
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-bottom: 8px;">`;
+                    types.forEach(type => {
+                        const filterId = `type|${type}`;
+                        const active = drawingActiveFilters.has(filterId) ? 'active' : '';
+                        html += `<span class="tag ${active}" data-type="type" data-value="${type}">${type}</span>`;
+                    });
+                    html += `</div>`;
+                }
+                if (specialties.length) {
+                    html += `<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%;">`;
+                    specialties.forEach(specialty => {
+                        const filterId = `specialty|${specialty}`;
+                        const active = drawingActiveFilters.has(filterId) ? 'active' : '';
+                        html += `<span class="tag ${active}" data-type="specialty" data-value="${specialty}">${specialty}</span>`;
+                    });
+                    html += `</div>`;
+                }
                 container.innerHTML = html;
 
-                container.querySelectorAll('.tag').forEach(tagEl => {
-                    tagEl.addEventListener('click', (e) => {
-                        const tagValue = tagEl.dataset.tag;
-                        if (window[activeTagVarName] === tagValue) {
-                            window[activeTagVarName] = null;
+                document.querySelectorAll('#drawingFilterTags .tag').forEach(tag => {
+                    tag.addEventListener('click', (e) => {
+                        const type = tag.dataset.type;
+                        const value = tag.dataset.value;
+                        const filterId = `${type}|${value}`;
+                        if (drawingActiveFilters.has(filterId)) {
+                            drawingActiveFilters.delete(filterId);
                         } else {
-                            window[activeTagVarName] = tagValue;
+                            drawingActiveFilters.add(filterId);
                         }
-                        renderDrawingSubtags(categoryKey, containerId, activeTagVarName);
-                        renderDrawingContent(categoryKey);
+                        renderDrawingFilters();
+                        renderDrawingContent();
                     });
                 });
             }
 
-            function renderDrawingContent(categoryKey) {
-                const items = categoryKey === 'regularPlan' ? data.regularPlan : data.minorCourses;
-                const activeTag = categoryKey === 'regularPlan' ? regularPlanActiveTag : minorCoursesActiveTag;
-                let filtered = items;
-                if (activeTag) {
-                    filtered = items.filter(item => {
-                        if (item.tags && item.tags.includes(activeTag)) return true;
-                        return item.title.includes(activeTag);
-                    });
-                }
-                const containerId = categoryKey === 'regularPlan' ? 'regularPlanContainer' : 'minorCoursesContainer';
-                const container = document.getElementById(containerId);
-                if (!container) return;
-                const html = filtered.map(book => `
+            function filterDrawingItems(items) {
+                if (drawingActiveFilters.size === 0) return items;
+                return items.filter(item => {
+                    for (let filterId of drawingActiveFilters) {
+                        const [type, value] = filterId.split('|');
+                        if (type === 'type') {
+                            const itemType = item.type || '书';
+                            if (itemType !== value) return false;
+                        } else if (type === 'specialty') {
+                            // 专项匹配：优先使用 item.specialty，其次 item.tags，否则标题包含
+                            let itemSpecialty = '';
+                            if (item.specialty) itemSpecialty = item.specialty;
+                            else if (item.tags && Array.isArray(item.tags) && item.tags.length) itemSpecialty = item.tags[0];
+                            else itemSpecialty = item.title.split(/\s+/)[0] || '基础';
+                            if (itemSpecialty !== value) return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            function renderDrawingContent() {
+                const allItems = getAllDrawingItems();
+                const filtered = filterDrawingItems(allItems);
+                // 分离正规计划和辅修课程
+                const regularPlanFiltered = filtered.filter(item => data.regularPlan.includes(item));
+                const minorCoursesFiltered = filtered.filter(item => data.minorCourses.includes(item));
+
+                const regularHtml = regularPlanFiltered.map(book => `
                     <div class="book-item">
                         <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
                         <a href="${book.link}" class="book-title">${book.title}</a>
                         <div class="book-author">${book.author}</div>
                     </div>
                 `).join('');
-                container.innerHTML = html || '<div>暂无内容</div>';
+                document.getElementById('regularPlanContainer').innerHTML = regularHtml || '<div>暂无内容</div>';
+
+                const minorHtml = minorCoursesFiltered.map(book => `
+                    <div class="book-item">
+                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
+                        <a href="${book.link}" class="book-title">${book.title}</a>
+                        <div class="book-author">${book.author}</div>
+                    </div>
+                `).join('');
+                document.getElementById('minorCoursesContainer').innerHTML = minorHtml || '<div>暂无内容</div>';
             }
 
             // 初始化
             renderRegularFilters();
             renderRegularContent();
-            renderDrawingSubtags('regularPlan', 'regularPlanSubtags', 'regularPlanActiveTag');
-            renderDrawingContent('regularPlan');
-            renderDrawingSubtags('minorCourses', 'minorCoursesSubtags', 'minorCoursesActiveTag');
-            renderDrawingContent('minorCourses');
+            renderDrawingFilters();
+            renderDrawingContent();
 
             // 主题切换
             const toggle = document.querySelector('.theme-toggle');
