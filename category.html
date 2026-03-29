@@ -263,7 +263,6 @@
         <div class="header">
             <div class="header-title" id="homeLink">SParks 的书架</div>
             <div class="header-nav">
-                <!-- 搜索框紧挨着“搜书” -->
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="搜索标题或作者...">
                 </div>
@@ -312,7 +311,8 @@
             }
 
             let currentCategory = initialCategory;
-            let currentFilter = { type: null, value: null };
+            // 多选筛选：使用 Set 存储 "group|value"
+            let activeFilters = new Set();
             let searchKeyword = '';
 
             // ---------- 辅助函数 ----------
@@ -400,13 +400,15 @@
                             <div class="filter-tags">
                     `;
                     group.values.forEach(value => {
-                        const active = (currentFilter.type === group.key && currentFilter.value === value) ? 'active' : '';
+                        const filterId = `${group.key}|${value}`;
+                        const active = activeFilters.has(filterId) ? 'active' : '';
                         html += `<div class="filter-tag ${active}" data-group="${group.key}" data-value="${value}">${value}</div>`;
                     });
                     html += `</div></div>`;
                 });
                 sidebar.innerHTML = html;
 
+                // 折叠/展开
                 document.querySelectorAll('.filter-group-header').forEach(header => {
                     header.addEventListener('click', (e) => {
                         const groupDiv = header.closest('.filter-group');
@@ -416,22 +418,25 @@
                     });
                 });
 
+                // 多选标签点击
                 document.querySelectorAll('.filter-tag').forEach(tag => {
                     tag.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const group = tag.dataset.group;
                         const value = tag.dataset.value;
-                        if (currentFilter.type === group && currentFilter.value === value) {
-                            currentFilter = { type: null, value: null };
+                        const filterId = `${group}|${value}`;
+                        if (activeFilters.has(filterId)) {
+                            activeFilters.delete(filterId);
                         } else {
-                            currentFilter = { type: group, value: value };
+                            activeFilters.add(filterId);
                         }
-                        renderSidebar();
-                        renderContent();
+                        renderSidebar();   // 刷新高亮
+                        renderContent();   // 刷新内容
                     });
                 });
             }
 
+            // 关键词筛选
             function filterByKeyword(items) {
                 if (!searchKeyword.trim()) return items;
                 const keyword = searchKeyword.toLowerCase();
@@ -441,19 +446,25 @@
                 });
             }
 
+            // 侧边栏多选筛选（AND 逻辑）
             function filterBySidebar(items) {
-                if (!currentFilter.type || !currentFilter.value) return items;
+                if (activeFilters.size === 0) return items;
                 return items.filter(item => {
-                    if (currentFilter.type === 'author') return item.author === currentFilter.value;
-                    if (currentFilter.type === 'genre') return item.genre === currentFilter.value;
-                    if (currentFilter.type === 'field') return item.field === currentFilter.value;
-                    if (currentFilter.type === 'type') return (item.type || '书') === currentFilter.value;
-                    if (currentFilter.type === 'specialty') {
-                        let itemSpecialty = '';
-                        if (item.specialty) itemSpecialty = item.specialty;
-                        else if (item.tags && item.tags.length) itemSpecialty = item.tags[0];
-                        else itemSpecialty = item.title.split(/\s+/)[0] || '基础';
-                        return itemSpecialty === currentFilter.value;
+                    for (let filterId of activeFilters) {
+                        const [type, value] = filterId.split('|');
+                        let match = false;
+                        if (type === 'author') match = (item.author === value);
+                        else if (type === 'genre') match = (item.genre === value);
+                        else if (type === 'field') match = (item.field === value);
+                        else if (type === 'type') match = ((item.type || '书') === value);
+                        else if (type === 'specialty') {
+                            let itemSpecialty = '';
+                            if (item.specialty) itemSpecialty = item.specialty;
+                            else if (item.tags && item.tags.length) itemSpecialty = item.tags[0];
+                            else itemSpecialty = item.title.split(/\s+/)[0] || '基础';
+                            match = (itemSpecialty === value);
+                        }
+                        if (!match) return false;
                     }
                     return true;
                 });
@@ -489,7 +500,7 @@
 
             function switchCategory(category) {
                 currentCategory = category;
-                currentFilter = { type: null, value: null };
+                activeFilters.clear();   // 清空所有筛选
                 searchKeyword = '';
                 document.getElementById('searchInput').value = '';
                 document.querySelectorAll('.category-tab').forEach(tab => {
@@ -503,7 +514,6 @@
                 renderContent();
             }
 
-            // 搜索事件：仅通过回车触发
             function initSearch() {
                 const searchInput = document.getElementById('searchInput');
                 searchInput.addEventListener('keypress', (e) => {
