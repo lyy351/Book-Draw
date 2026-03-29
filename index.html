@@ -413,10 +413,11 @@
             function renderRegularContent() {
                 const filteredNotes = filterRegularItems(data.notes);
                 const filteredResources = filterRegularItems(data.resources);
+                const defaultCover = 'https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg';
 
                 const notesHtml = filteredNotes.map(note => `
                     <div class="book-item">
-                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${note.title}">
+                        <img class="book-cover" src="${note.cover || defaultCover}" alt="${note.title}">
                         <a href="${note.link}" class="book-title">${note.title}</a>
                         <div class="book-author">${note.author}</div>
                     </div>
@@ -425,7 +426,7 @@
 
                 const resourcesHtml = filteredResources.map(res => `
                     <div class="book-item">
-                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${res.title}">
+                        <img class="book-cover" src="${res.cover || defaultCover}" alt="${res.title}">
                         <a href="${res.link}" target="_blank" class="book-title">${res.title}</a>
                         <div class="book-author">${res.author}</div>
                     </div>
@@ -532,10 +533,11 @@
                 // 分离正规计划和辅修课程
                 const regularPlanFiltered = filtered.filter(item => data.regularPlan.includes(item));
                 const minorCoursesFiltered = filtered.filter(item => data.minorCourses.includes(item));
+                const defaultCover = 'https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg';
 
                 const regularHtml = regularPlanFiltered.map(book => `
                     <div class="book-item">
-                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
+                        <img class="book-cover" src="${book.cover || defaultCover}" alt="${book.title}">
                         <a href="${book.link}" class="book-title">${book.title}</a>
                         <div class="book-author">${book.author}</div>
                     </div>
@@ -544,7 +546,7 @@
 
                 const minorHtml = minorCoursesFiltered.map(book => `
                     <div class="book-item">
-                        <img class="book-cover" src="https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg" alt="${book.title}">
+                        <img class="book-cover" src="${book.cover || defaultCover}" alt="${book.title}">
                         <a href="${book.link}" class="book-title">${book.title}</a>
                         <div class="book-author">${book.author}</div>
                     </div>
