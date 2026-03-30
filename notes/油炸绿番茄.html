@@ -267,52 +267,6 @@
     <div class="page-footer">166</div>
 </div>
 
-<!-- 复制元数据按钮 -->
-<button class="copy-metadata-btn" id="copyMetaBtn">📋 复制元数据</button>
 
-<script>
-    (function() {
-        const copyBtn = document.getElementById('copyMetaBtn');
-        if (!copyBtn) return;
-
-        // 从 meta 标签中提取元数据
-        function getMetadata() {
-            const title = document.querySelector('meta[name="book-title"]')?.getAttribute('content') || '';
-            const author = document.querySelector('meta[name="book-author"]')?.getAttribute('content') || '';
-            const genre = document.querySelector('meta[name="book-genre"]')?.getAttribute('content') || '';
-            const field = document.querySelector('meta[name="book-field"]')?.getAttribute('content') || '';
-            const cover = document.querySelector('meta[name="book-cover"]')?.getAttribute('content') || 'https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg';
-            const link = document.querySelector('meta[name="book-link"]')?.getAttribute('content') || window.location.pathname;
-            return { title, author, genre, field, cover, link };
-        }
-
-        copyBtn.addEventListener('click', async () => {
-            const meta = getMetadata();
-            // 构造符合 data.js 中 notes 数组的条目格式
-            const entry = {
-                id: `note_${Date.now()}`,
-                title: meta.title,
-                author: meta.author,
-                genre: meta.genre,
-                field: meta.field,
-                link: meta.link,
-                cover: meta.cover
-            };
-            const jsonStr = JSON.stringify(entry, null, 2);
-            try {
-                await navigator.clipboard.writeText(jsonStr);
-                // 临时改变按钮文字提示
-                const originalText = copyBtn.textContent;
-                copyBtn.textContent = '✅ 已复制！';
-                setTimeout(() => {
-                    copyBtn.textContent = originalText;
-                }, 1500);
-            } catch (err) {
-                console.error('复制失败', err);
-                alert('无法复制，请手动复制以下内容：\n' + jsonStr);
-            }
-        });
-    })();
-</script>
 </body>
 </html>
