@@ -31,3 +31,12 @@ window.SITE_DATA = {
   regularPlan: [],
   minorCourses: []
 };
+
+{
+  title: "赶时间的人：一个外卖员的诗",
+  author: "王计兵",
+  genre: "诗歌",
+  field: "文学",
+  link: "notes/赶时间的人.html",
+  cover: "https://res.weread.qq.com/wrepub/CB_1vSCRqCQD96l72l71NCtY6QP_parsecover"
+}
