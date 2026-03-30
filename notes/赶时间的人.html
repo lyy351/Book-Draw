@@ -72,7 +72,7 @@
         }
 
         .book-page {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background-color: #f9f7f2;
             padding: 3rem 4rem;
@@ -189,14 +189,25 @@
             text-indent: 2em;
         }
 
-        .quote-section {
+        /* 摘抄左右分栏布局 */
+        .quote-grid {
+            display: flex;
+            gap: 2rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .quote-card {
+            flex: 1;
+            min-width: 250px;
             padding-left: 1rem;
             font-size: 0.95rem;
             color: #444;
             font-style: italic;
             border-left: 2px solid #d35400;
             white-space: pre-line;
+        }
+        .quote-card p {
+            margin-bottom: 0.5rem;
         }
 
         .page-footer {
@@ -209,6 +220,10 @@
         @media (max-width: 768px) {
             .book-page {
                 padding: 2rem;
+            }
+            .quote-grid {
+                flex-direction: column;
+                gap: 1.5rem;
             }
         }
     </style>
@@ -231,10 +246,8 @@
                 <div class="book-title">赶时间的人</div>
                 <div class="book-subtitle"></div>
                 <div class="book-meta">
-                    王计兵<br>
-                    台海出版社<br>
-                    ISBN：9787516834114<br>
-                    约3.4万字
+                    王计兵，台海出版社<br>
+                    3/5，2026/3/29，1h，3.4万字
                 </div>
             </div>
 
@@ -250,20 +263,36 @@
                 </div>
             </div>
 
-            <!-- 摘抄区块 -->
-            <div class="quote-section">
-                你向佛 也注定成不了舍利<br>
-                你有太多可燃的物质<br>
-                你的体内有一千亩良田<br>
-                你的想念是一万朵棉花<br>
-                可你仍然无法将爱种进诗句<br>
-                你怕文字太轻<br>
-                压不住棉花的漂泊<br>
-                你怕下笔太重，撇捺如刀<br>
-                你的人生是轻的<br>
-                因此向上<br>
-                可往事很沉<br>
-                所以你终将低于尘埃
+            <!-- 摘抄左右分栏区块 -->
+            <div class="quote-grid">
+                <div class="quote-card">
+                    你向佛 也注定成不了舍利<br>
+                    你有太多可燃的物质<br>
+                    你的体内有一千亩良田<br>
+                    你的想念是一万朵棉花<br>
+                    可你仍然无法将爱种进诗句<br>
+                    你怕文字太轻<br>
+                    压不住棉花的漂泊<br>
+                    你怕下笔太重，撇捺如刀<br>
+                    你的人生是轻的<br>
+                    因此向上<br>
+                    可往事很沉<br>
+                    所以你终将低于尘埃
+                </div>
+                <div class="quote-card">
+                    从空气里赶出风<br>
+                    从风里赶出刀子<br>
+                    从骨头里赶出火<br>
+                    从火里赶出水<br>
+                    赶时间的人没有四季<br>
+                    只有一站和下一站<br>
+                    世界是一个地名<br>
+                    王庄村也是<br>
+                    每天我都能遇到<br>
+                    一个个飞奔的外卖员<br>
+                    用双脚锤击大地<br>
+                    在这个人间不断地淬火
+                </div>
             </div>
         </div>
 
