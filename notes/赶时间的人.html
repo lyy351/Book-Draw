@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赶时间的人：一个外卖员的诗 - 读书笔记</title>
+    <!-- 元数据标签（供半自动同步使用） -->
+    <meta name="book-title" content="赶时间的人：一个外卖员的诗">
+    <meta name="book-author" content="王计兵">
+    <meta name="book-genre" content="诗歌">
+    <meta name="book-field" content="文学">
+    <meta name="book-cover" content="">
+    <meta name="book-link" content="notes/赶时间的人.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
+            background-color: #f7f5f0;
+            padding: 2rem;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        /* 统一顶部栏样式 */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        body.light .site-header {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        .site-title {
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            color: inherit;
+            text-decoration: none;
+        }
+        .site-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .site-nav a {
+            color: inherit;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .site-nav a:first-child {
+            color: #ff6b35;
+            font-weight: 500;
+        }
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        /* 笔记页面样式（仿书） */
+        .book-page {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #f9f7f2;
+            padding: 3rem 4rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .left-page {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .page-number,
+        .book-info {
+            text-align: right !important;
+        }
+
+        .page-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #d63031;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .book-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .book-subtitle {
+            font-size: 0.95rem;
+            color: #555;
+            font-family: monospace;
+            margin: 0;
+        }
+
+        .book-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .book-review-section {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            margin-top: 1rem;
+        }
+
+        .book-cover {
+            width: 120px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            background-color: #eee;
+        }
+
+        .review-text {
+            font-size: 0.95rem;
+            text-align: justify;
+            text-indent: 2em;
+            flex: 1;
+        }
+        .review-text p {
+            margin-bottom: 1rem;
+        }
+
+        .book-info-sort-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            margin-top: 2.5rem;
+        }
+
+        .time-entry {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .time-stamp {
+            font-size: 0.8rem;
+            color: #d35400;
+            font-weight: 500;
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+        .sort-text {
+            font-size: 0.95rem;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        .section-notes {
+            margin-top: 2.5rem;
+        }
+        .note-quote {
+            padding-left: 1rem;
+            font-size: 0.95rem;
+            color: #444;
+            font-style: italic;
+            border-left: 2px solid #d35400;
+            margin-bottom: 0.8rem;
+        }
+        .note-thought {
+            font-size: 0.95rem;
+            text-align: justify;
+            text-indent: 2em;
+        }
+
+        .quote-section {
+            margin-top: 2rem;
+            padding-left: 1rem;
+            font-size: 0.95rem;
+            color: #444;
+            font-style: italic;
+            border-left: 2px solid #d35400;
+        }
+
+        .page-footer {
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #888;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .book-page {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-header">
+        <div class="site-title" id="homeLink">SParks 的书架</div>
+        <div class="site-nav">
+            <a href="../category.html">分类</a>
+            <a href="../about.html">关于</a>
+            <span class="theme-toggle">☀️</span>
+        </div>
+    </div>
+
+    <div class="book-page">
+        <div class="left-page">
+            <div class="page-number">1</div>
+            
+            <div class="book-info">
+                <div class="book-title">赶时间的人：一个外卖员的诗</div>
+                <div class="book-subtitle"></div>
+                <div class="book-meta">
+                    王计兵<br>
+                    台海出版社·真故图书<br>
+                    3.4万字
+                </div>
+            </div>
+
+            <!-- 整本书读后感（点评） -->
+            <div class="book-review-section">
+                <img src="https://res.weread.qq.com/wrepub/CB_1vSCRqCQD96l72l71NCtY6QP_parsecover" alt="封面" class="book-cover" onerror="this.src='https://p1.ssl.qhimg.com/t01d4a0a0e0a8a8a8a8.jpg'">
+                <div class="review-text">
+                    <p>如其所言，许多诗歌的诞生是关键词，及之后的串联。不连贯，是阻我情绪第一者，所以满篇读下来，感触一般。兴许是个人价值观原因，不论什么文学，只淡淡地给出一种客观描述，或是结尾一两句日常的感慨，既没有辛酸入骨的悲剧，也没有满地鸡毛蒜皮的无法逃离的琐细，更没有总结升华的道理，便平实得如同在看一篇流水账。而不连贯更是如刀在我的各类思绪组成的肉上不断拍打，代表情绪的筋被剔出，于是我满目是冷漠。</p>
+                    <p>最痛苦的人是没有希望的人，ta 能写最无望的绝境，ta 之所见，皆是痛苦， 却往往容易拐向了抱怨呻吟，至少旁人来看如此，无人会喜只一味消极悲观的人。</p>
+                    <p>而这本书的作者，显然是一个坚韧积极的人，甚至是一个还有点赚钱脑子的人，世间千千万万的人不会踏出去开店的那一步，与他同时代的人，千千万万的没有接触电脑，没有手敲木房，没有认证外卖，他们走不出那一步，有的是因为没机会，有的是因为没勇气。</p>
+                    <p>作者最落魄的时候去拾荒，我不知道是翻垃圾桶的那种拾还是收废品的那种，但总归最落魄的时候到这个程度，却也是爱看书，敢开店，敢自个造房，后面也敢去一个自己全然不熟悉的行业闯荡，我不觉得这是一个普通人，又或许是因为我把庸人当成了普通人，这人不是庸人。所谓庸人，在我看来是沉浮在自己的舒适圈里自洽自锢的一类人，我身边许多人是这一类，不知道最后我会不会也是这一类。</p>
+                    <p>我的父亲一辈子在文化上最骄傲的事情是他写的一手字，可他也不看书，他看得最多的，好像是新华字典，更多的文字是视频所谓命的短句，父亲的爱好在我这几乎是空白的，我母亲也是，我只知道他们的生活大多数便是打工、打牌、喝酒抽烟、和对方打架、看电视，刷视频。甚至于也不知道他们刷的视频是些什么，但估计也无外乎营销号那些所谓如何教育儿女如何识人如何赚钱如何防诈骗之类的夸张的没良心没道德的流量密码视频。</p>
+                    <p>父亲母亲在文中甚至在许多人的文字中，出现形式都限于他们对我们的关怀和我们对他们的所谓感恩愧疚思念，父亲母亲喜欢什么？过去是什么样的？他们经历过什么年代？他们的十八岁是什么样子？我们一无所知，我们文字里拉他们出来转转，写他们活着如何沉默，如何唠叨，更多的时候写他们死去。可与这样相处关系的父母阴阳两隔这码事，估计只会在年纪越大后才越有实感和悲戚深切。</p>
+                </div>
+            </div>
+
+
+
+            <!-- 章节笔记区块（可选） -->
+            <div class="section-notes">
+                <div class="note-quote">你向佛 也注定成不了舍利 ...</div>
+                <div class="note-thought">引自自序，关于“可你仍然无法将爱种进诗句”的思考。</div>
+                <div class="note-quote">从空气里赶出风 ...</div>
+                <div class="note-thought">标题同名诗，将外卖员的奔波与淬火意象结合。</div>
+            </div>
+
+            <!-- 摘抄区块（与上述重复，可保留） -->
+            <div class="quote-section">
+                你向佛 也注定成不了舍利<br>
+                你有太多可燃的物质<br>
+                你的体内有一千亩良田<br>
+                你的想念是一万朵棉花<br>
+                可你仍然无法将爱种进诗句<br>
+                你怕文字太轻<br>
+                压不住棉花的漂泊<br>
+                你怕下笔太重，撇捺如刀<br>
+                你的人生是轻的<br>
+                因此向上<br>
+                可往事很沉<br>
+                所以你终将低于尘埃
+            </div>
+        </div>
+
+        <div class="page-footer">第 1 页</div>
+    </div>
+
+    <script>
+        // 首页链接
+        document.getElementById('homeLink')?.addEventListener('click', () => {
+            window.location.href = '../index.html';
+        });
+        // 主题切换
+        const toggle = document.querySelector('.theme-toggle');
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            toggle.textContent = '🌙';
+        } else {
+            document.body.classList.remove('light');
+            toggle.textContent = '☀️';
+        }
+        toggle.addEventListener('click', () => {
+            const isLight = document.body.classList.toggle('light');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            toggle.textContent = isLight ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>
