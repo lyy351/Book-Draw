@@ -5,13 +5,317 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SParks 的书架</title>
     <style>
-        /* 原有样式保持不变，此处省略以节省篇幅，实际使用请保留原完整样式 */
-        /* 与上一版本完全相同，仅修改 JS 部分 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #6b7b76;
+            background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px);
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        body.light {
+            background-color: #f0ebe5;
+            background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 4px);
+            color: #333333;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: inherit;
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 0;
+        }
+        body.light .header {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .header-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        body.light .header-nav a {
+            color: #333;
+        }
+        .header-nav a:first-child {
+            color: #ff6b35;
+            font-weight: 500;
+        }
+
+        .quote {
+            text-align: center;
+            margin: 20px 0 10px 0;
+        }
+        .quote-text {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        .quote-author {
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+        body.light .quote-author {
+            color: #666;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 500px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            font-size: 14px;
+        }
+        body.light .search-input {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+        }
+        .search-input::placeholder {
+            color: #ccc;
+        }
+        .search-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            background-color: #ffffff;
+            color: #333333;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .search-dropdown {
+            padding: 10px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        body.light .search-dropdown {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .hot-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+        .tag {
+            padding: 4px 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+        }
+        body.light .tag {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #555;
+        }
+        .tag.active {
+            background-color: #ff6b35;
+            color: #fff;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            padding: 6px 12px;
+            background-color: #ff6b35;
+            color: #ffffff;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .section-more {
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+        body.light .section-more {
+            color: #555;
+        }
+
+        .book-list {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .book-item {
+            width: 160px;
+            flex-shrink: 0;
+        }
+        .book-cover {
+            width: 100%;
+            height: 220px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            object-fit: cover;
+        }
+        body.light .book-cover {
+            background-color: #eee;
+        }
+        .book-title {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.4;
+            text-decoration: none;
+            display: block;
+        }
+        body.light .book-title {
+            color: #333;
+        }
+        .book-author {
+            font-size: 11px;
+            color: #e0e0e0;
+        }
+        body.light .book-author {
+            color: #666;
+        }
+
+        .plan-block {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        body.light .plan-block {
+            background-color: rgba(255,255,255,0.6);
+        }
+        .sub-section {
+            margin-top: 20px;
+        }
+        .sub-section .section-title {
+            margin-bottom: 12px;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- 固定顶部区域、筛选标签、笔记/资源/画画模块，HTML 结构不变 -->
-    <!-- ... 省略，与上一版相同 ... -->
+    <div class="sticky-top">
+        <div class="header">
+            <div class="header-title" id="homeLink">SParks 的书架</div>
+            <div class="header-nav">
+                <a href="#">搜书</a>
+                <a href="category.html">分类</a>
+                <a href="about.html">关于</a>
+                <span class="theme-toggle">☀️</span>
+            </div>
+        </div>
+
+        <div class="quote">
+            <div class="quote-text">黑发不知勤学早，白发方悔读书迟。</div>
+            <div class="quote-author">- 颜真卿</div>
+        </div>
+
+        <div class="search-bar">
+            <div class="search-dropdown">
+                <span>🔍</span>
+                <span>搜书</span>
+                <span>▼</span>
+            </div>
+            <input type="text" class="search-input" placeholder="输入关键词搜索">
+            <button class="search-btn">搜索</button>
+        </div>
+    </div>
+
+    <!-- 常规大类筛选标签 -->
+    <div class="hot-tags" id="regularFilterTags"></div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规笔记</div>
+            <a href="category.html?category=notes" class="section-more">查看更多 ></a>
+        </div>
+        <div id="notesContainer" class="book-list"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">常规资源</div>
+            <a href="category.html?category=resources" class="section-more">查看更多 ></a>
+        </div>
+        <div id="resourcesContainer" class="book-list"></div>
+    </div>
+
+    <!-- 画画大类筛选标签 -->
+    <div class="hot-tags" id="drawingFilterTags"></div>
+
+    <div class="section">
+        <div class="sub-section">
+            <div class="section-header">
+                <div class="section-title">正规计划</div>
+                <a href="category.html?category=regularPlan" class="section-more">查看更多 ></a>
+            </div>
+            <div class="plan-block" id="regularPlanDesc">系统学习绘画的路线图，包括素描、色彩、构图等基础训练。</div>
+            <div id="regularPlanContainer" class="book-list"></div>
+        </div>
+        <div class="sub-section">
+            <div class="section-header">
+                <div class="section-title">辅修课程</div>
+                <a href="category.html?category=minorCourses" class="section-more">查看更多 ></a>
+            </div>
+            <div id="minorCoursesContainer" class="book-list"></div>
+        </div>
+    </div>
 
     <script src="data.js"></script>
     <script>
