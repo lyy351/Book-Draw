@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>油炸绿番茄 - 读书笔记</title>
-    <!-- ========== 元数据标签（供复制功能使用，需根据实际内容修改） ========== -->
-    <meta name="book-title" content="油炸绿番茄">
-    <meta name="book-author" content="范妮·弗拉格">
-    <meta name="book-genre" content="小说">
-    <meta name="book-field" content="文学">
-    <meta name="book-cover" content="https://picsum.photos/id/1037/120/180">
-    <meta name="book-link" content="notes/油炸绿番茄.html">
     <style>
         * {
             margin: 0;
@@ -26,6 +19,51 @@
             color: #333;
         }
 
+        /* 统一顶部栏样式（与首页一致） */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        body.light .site-header {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        .site-title {
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            color: inherit;
+            text-decoration: none;
+        }
+        .site-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .site-nav a {
+            color: inherit;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .site-nav a:first-child {
+            color: #ff6b35;
+            font-weight: 500;
+        }
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        /* 笔记页面样式（原样保留） */
         .book-page {
             max-width: 800px;
             margin: 0 auto;
@@ -35,7 +73,6 @@
             position: relative;
         }
 
-        /* 左侧页面 */
         .left-page {
             display: flex;
             flex-direction: column;
@@ -43,7 +80,6 @@
             margin-bottom: 3rem;
         }
 
-        /* 封面上方所有内容 右对齐 */
         .page-number,
         .book-info {
             text-align: right !important;
@@ -56,14 +92,12 @@
             margin-bottom: 0.5rem;
         }
 
-        /* 包裹容器：紧凑无间距 */
         .book-info {
             display: flex;
             flex-direction: column;
             gap: 0;
         }
 
-        /* 段前段后完全 0，无缝紧凑 */
         .book-title {
             font-size: 1.8rem;
             font-weight: 600;
@@ -84,7 +118,6 @@
             line-height: 1.5;
         }
 
-        /* ====================== 1. 整本书读后感区块 ====================== */
         .book-review-section {
             display: flex;
             gap: 1.5rem;
@@ -108,7 +141,6 @@
             margin-bottom: 1rem;
         }
 
-        /* ====================== 2. 书本信息梳理区块 ====================== */
         .book-info-sort-section {
             display: flex;
             flex-direction: column;
@@ -133,7 +165,6 @@
             text-indent: 2em;
         }
 
-        /* ====================== 3. 章节 / 段落 / 句子 笔记 ====================== */
         .section-notes {
             margin-top: 2.5rem;
         }
@@ -151,7 +182,6 @@
             text-indent: 2em;
         }
 
-        /* ====================== 4. 摘抄区块 ====================== */
         .quote-section {
             margin-top: 2rem;
             padding-left: 1rem;
@@ -168,105 +198,103 @@
             text-align: center;
         }
 
-        /* 复制按钮样式 */
-        .copy-metadata-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #d35400;
-            color: white;
-            border: none;
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: background 0.2s;
-            font-family: inherit;
-        }
-        .copy-metadata-btn:hover {
-            background-color: #e67e22;
-        }
-        .copy-metadata-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* 响应式适配 */
         @media (max-width: 768px) {
             .book-page {
                 padding: 2rem;
-            }
-            .copy-metadata-btn {
-                bottom: 20px;
-                right: 20px;
-                padding: 6px 12px;
-                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
-<div class="book-page">
-    <div class="left-page">
-        <div class="page-number">22</div>
-        
-        <!-- 书名信息包裹 -->
-        <div class="book-info">
-            <div class="book-title">油炸绿番茄</div>
-            <div class="book-subtitle">FRIED GREEN TOMATOES AT THE WHISTLE STOP CAFE</div>
-            <div class="book-meta">
-                [美] 范妮·弗拉格，(译) 梁卿，北京时代华文书局·2024<br>
-                4.5/5，8.30—9.14/2025，8h25min，16.51万字
-            </div>
-        </div>
-
-        <!-- ====================== 1. 整本书读后感 ====================== -->
-        <div class="book-review-section">
-            <img src="https://picsum.photos/id/1037/120/180" alt="油炸绿番茄" class="book-cover">
-            <div class="review-text">
-                <p>多线叙述的群像作品，温暖有趣到想流泪，有多久没有舍不得看完一本书了……</p>
-                <p>因为简介中“‘假小子’艾姬遇上淑女露丝”而迟迟没有打开这本十分热门的书，结果开始看了没多久就被艾姬完全全地吸引了，好有人格魅力的角色，勇敢鲜活，生命力十足。然后是妮娜（刚看完《奥兰多》又来了个弗吉尼亚hhh），太有趣太可爱了。这两个人让我深深地感受到“日子怎么会跟谁过都一样呢”。</p>
-                <p>这本书的另一个特色是多线叙述。篇与篇之间看似跳跃，实则巧妙交织。群像故事在作者的精心布置中徐徐展开，人物次第登场，在跨越的时空中逐渐丰满，又逐渐离场，最终叙述重合，故事收束。越到后面越感到作者讲故事的能力十分了得。最后的20%看得很慢，个人的逝感，要与熟悉的人物一一告别，调是积极温暖的。</p>
-            </div>
-        </div>
-
-        <!-- ====================== 2. 书本信息梳理区块 ====================== -->
-        <div class="book-info-sort-section">
-            <div class="time-entry">
-                <div class="time-stamp">玫瑰露台养老院<br>1985年12月15日</div>
-                <div class="sort-text">他们一度养了一只名叫库基基的时看它洗饼干。他们在后院里一块苏打饼干。它就一块接一饼干为什么不见了。它看着自次都惊讶不已。到头来它也没了。它花了好多时间洗饼干。太好玩……它还洗过一次冰激</div>
-            </div>
-            <div class="time-entry">
-                <div class="time-stamp">玫瑰露台养老院<br>1986年2月2日</div>
-                <div class="sort-text">特雷德古德太太指给伊夫琳看白色陶瓷小猎犬花盆里。</div>
-            </div>
-            <div class="time-entry">
-                <div class="time-stamp">汽笛站咖啡馆<br>1938年12月1日</div>
-                <div class="sort-text">我们听到楼上卫生间里传来几乎从不跟我们一起吃饭的艾看着我们，悄声说：‘孩子们，人，我希望大家不要笑话她。</div>
-            </div>
-            <div class="time-entry">
-                <div class="time-stamp"></div>
-                <div class="sort-text">“哇……你还认识别的勇敢的人一只十二叉角的雄鹿，这事气。”“勇气跟勇气不一样，”一只又呆又笨的动物，不需要</div>
-            </div>
-        </div>
-
-        <!-- ====================== 3. 章节 / 段落 / 句子 笔记 ====================== -->
-        <div class="section-notes">
-            <div class="note-quote">这里放书中原文（摘抄样式）</div>
-            <div class="note-thought">这里放你的想法、笔记、感受（正文样式，首行缩进）</div>
-        </div>
-
-        <!-- ====================== 4. 摘抄区块 ====================== -->
-        <div class="quote-section">
-            这里放书中经典句子摘抄
+    <!-- 统一顶部栏 -->
+    <div class="site-header">
+        <div class="site-title" id="homeLink">SParks 的书架</div>
+        <div class="site-nav">
+            <a href="#">搜书</a>
+            <a href="category.html">分类</a>
+            <a href="about.html">关于</a>
+            <span class="theme-toggle">☀️</span>
         </div>
     </div>
 
-    <div class="page-footer">166</div>
-</div>
+    <div class="book-page">
+        <div class="left-page">
+            <div class="page-number">22</div>
+            
+            <div class="book-info">
+                <div class="book-title">油炸绿番茄</div>
+                <div class="book-subtitle">FRIED GREEN TOMATOES AT THE WHISTLE STOP CAFE</div>
+                <div class="book-meta">
+                    [美] 范妮·弗拉格，(译) 梁卿，北京时代华文书局·2024<br>
+                    4.5/5，8.30—9.14/2025，8h25min，16.51万字
+                </div>
+            </div>
 
+            <div class="book-review-section">
+                <img src="https://picsum.photos/id/1037/120/180" alt="油炸绿番茄" class="book-cover">
+                <div class="review-text">
+                    <p>多线叙述的群像作品，温暖有趣到想流泪，有多久没有舍不得看完一本书了……</p>
+                    <p>因为简介中“‘假小子’艾姬遇上淑女露丝”而迟迟没有打开这本十分热门的书，结果开始看了没多久就被艾姬完全全地吸引了，好有人格魅力的角色，勇敢鲜活，生命力十足。然后是妮娜（刚看完《奥兰多》又来了个弗吉尼亚hhh），太有趣太可爱了。这两个人让我深深地感受到“日子怎么会跟谁过都一样呢”。</p>
+                    <p>这本书的另一个特色是多线叙述。篇与篇之间看似跳跃，实则巧妙交织。群像故事在作者的精心布置中徐徐展开，人物次第登场，在跨越的时空中逐渐丰满，又逐渐离场，最终叙述重合，故事收束。越到后面越感到作者讲故事的能力十分了得。最后的20%看得很慢，个人的逝感，要与熟悉的人物一一告别，调是积极温暖的。</p>
+                </div>
+            </div>
 
+            <div class="book-info-sort-section">
+                <div class="time-entry">
+                    <div class="time-stamp">玫瑰露台养老院<br>1985年12月15日</div>
+                    <div class="sort-text">他们一度养了一只名叫库基基的时看它洗饼干。他们在后院里一块苏打饼干。它就一块接一饼干为什么不见了。它看着自次都惊讶不已。到头来它也没了。它花了好多时间洗饼干。太好玩……它还洗过一次冰激</div>
+                </div>
+                <div class="time-entry">
+                    <div class="time-stamp">玫瑰露台养老院<br>1986年2月2日</div>
+                    <div class="sort-text">特雷德古德太太指给伊夫琳看白色陶瓷小猎犬花盆里。</div>
+                </div>
+                <div class="time-entry">
+                    <div class="time-stamp">汽笛站咖啡馆<br>1938年12月1日</div>
+                    <div class="sort-text">我们听到楼上卫生间里传来几乎从不跟我们一起吃饭的艾看着我们，悄声说：‘孩子们，人，我希望大家不要笑话她。</div>
+                </div>
+                <div class="time-entry">
+                    <div class="time-stamp"></div>
+                    <div class="sort-text">“哇……你还认识别的勇敢的人一只十二叉角的雄鹿，这事气。”“勇气跟勇气不一样，”一只又呆又笨的动物，不需要</div>
+                </div>
+            </div>
+
+            <div class="section-notes">
+                <div class="note-quote">这里放书中原文（摘抄样式）</div>
+                <div class="note-thought">这里放你的想法、笔记、感受（正文样式，首行缩进）</div>
+            </div>
+
+            <div class="quote-section">
+                这里放书中经典句子摘抄
+            </div>
+        </div>
+
+        <div class="page-footer">166</div>
+    </div>
+
+    <script>
+        // 统一主题切换逻辑（与首页、分类页共享 localStorage）
+        (function() {
+            const toggle = document.querySelector('.theme-toggle');
+            if (!toggle) return;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                toggle.textContent = '🌙';
+            } else {
+                document.body.classList.remove('light');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', () => {
+                const isLight = document.body.classList.toggle('light');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                toggle.textContent = isLight ? '🌙' : '☀️';
+            });
+        })();
+
+        // 首页链接
+        document.getElementById('homeLink')?.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
 </body>
 </html>
