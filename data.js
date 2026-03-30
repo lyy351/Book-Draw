@@ -31,7 +31,7 @@ window.SITE_DATA = {
       genre: "诗歌",
       field: "文学",
       link: "notes/赶时间的人.html",
-      cover: "https://res.weread.qq.com/wrepub/CB_1vSCRqCQD96l72l71NCtY6QP_parsecover"
+      cover: "https://cdn.weread.qq.com/weread/cover/52/cpplatform_pc1qu7jf2d36xxkhy6dx1f/t6_cpplatform_pc1qu7jf2d36xxkhy6dx1f1683797322.jpg"
     }
   ],
   resources: [],
