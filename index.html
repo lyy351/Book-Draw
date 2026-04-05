@@ -382,7 +382,6 @@
             if (!window.SITE_DATA) { console.error('数据文件未加载'); return; }
             const data = window.SITE_DATA;
 
-            // ---------- 常规大类筛选（多选） ----------
             let regularActiveFilters = new Set();
 
             function getRegularTagOptions() {
@@ -463,7 +462,7 @@
                 document.getElementById('resourcesContainer').innerHTML = resourcesHtml || '<div>暂无资源</div>';
             }
 
-            // ---------- 画画大类筛选（支持作者拆分） ----------
+            // 画画大类筛选（作者拆分）
             let drawingActiveFilters = new Set();
 
             function getAllDrawingItems() {
@@ -567,7 +566,6 @@
             renderDrawingFilters();
             renderDrawingContent();
 
-            // 主题切换
             const toggle = document.querySelector('.theme-toggle');
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'light') { document.body.classList.add('light'); toggle.textContent = '🌙'; }
